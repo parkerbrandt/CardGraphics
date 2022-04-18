@@ -5,7 +5,7 @@ plugins {
     id "com.github.johnrengelman.shadow" version "5.1.0"
 }
 
-group 'org.example'
+group 'ou.cs.cg'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -15,6 +15,9 @@ repositories {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
+    implementation group: 'com.metsci.ext.org.jogamp.jogl', name: 'jogl-all-main', version: '2.4.0-rc-20200202', transitive: true
+    implementation group: 'com.metsci.ext.org.jogamp.gluegen', name: 'gluegen-rt-main', version: '2.4.0-rc-20200202', transitive: true
 }
 
 test {
