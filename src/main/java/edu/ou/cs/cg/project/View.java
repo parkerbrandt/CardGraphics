@@ -11,11 +11,14 @@ import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureIO;
 import edu.ou.cs.cg.project.scene.Card;
 import edu.ou.cs.cg.project.scene.Room;
 import edu.ou.cs.cg.utilities.Node;
 
 import java.awt.*;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Random;
 
 
@@ -32,8 +35,14 @@ public class View implements GLEventListener {
     // Private Class Members
     //****************************************
     private static final int DEFAULT_FRAMES_PER_SECOND = 60;
-    private static final String RSRC = "images/";               // Resource folder location
-    private static final String[] FILENAMES = {};               // TODO: Add filenames
+    private static final String RSRC = "/images/";               // Resource folder location
+    private static final String[] FILENAMES =
+            {
+                    "wall.jpg"         // Image used to texture the walls
+                    //"window.jpg",       // Transparent window put over the city image
+                    //"city.jpg",         // The city image used to show the "outside" world
+                    //"ceiling.jpg",      // Image used to texture the ceiling
+            };
 
 
     //****************************************
@@ -192,15 +201,47 @@ public class View implements GLEventListener {
         gl.glLoadIdentity();
 
         glu.gluLookAt(0.0, 1.0, 3.0,            // Camera coordinates
-                    0.0, 0.0, 0.0,        // Focal point coordinates
+                    0.0, 1.0, 0.0,        // Focal point coordinates
                     0.0, 1.0, 0.0);              // "up" vector
 
         // TODO: Change camera position and angle of rotation
 
     }
 
+    /**
+     * Load image files as textures into instances of JOGL's texture class
+     * @param drawable
+     */
     private void initTextures(GLAutoDrawable drawable) {
 
+        GL2 gl = drawable.getGL().getGL2();
+
+        textures = new Texture[FILENAMES.length];
+
+        // Iterate through each file and initialize the texture
+        for(int i = 0; i < FILENAMES.length; i++) {
+            try {
+                URL url = View.class.getResource(RSRC + FILENAMES[i]);
+                System.out.println(url);
+
+                if(url != null) {
+                    // Create the texture from a JPG file
+                    textures[i] = TextureIO.newTexture(url, false, TextureIO.JPG);
+
+                    textures[i].setTexParameteri(gl, GL2.GL_TEXTURE_MIN_FILTER,
+                            GL2.GL_LINEAR);
+                    textures[i].setTexParameteri(gl, GL2.GL_TEXTURE_MAG_FILTER,
+                            GL2.GL_LINEAR);
+                    textures[i].setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_S,
+                            GL2.GL_CLAMP_TO_EDGE);
+                    textures[i].setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_T,
+                            GL2.GL_CLAMP_TO_EDGE);
+                }
+
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -239,6 +280,12 @@ public class View implements GLEventListener {
         // Draw text in white
         renderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
+        // Draw instructions on the left side if
+        String instruct = "Instructions";
+        if(model.showInstructions()) {
+            renderer.draw(instruct, 2, height - 12);
+        }
+
         renderer.endRendering();
     }
 
@@ -251,12 +298,12 @@ public class View implements GLEventListener {
     public void initScene(GLAutoDrawable drawable) {
 
         // TODO: Create cubic stage
-        Room stage = new Room();
+        Room stage = new Room(textures);
         root.add(stage);
 
         // Create the default card
-        Card main = new Card(this, model);
-        root.add(main);
+        // Card main = new Card(this, model);
+        // root.add(main);
 
         // TODO: Iterate through each file in images/cards and show on a shelf
     }
