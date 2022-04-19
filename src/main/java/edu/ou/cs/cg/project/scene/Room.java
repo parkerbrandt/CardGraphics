@@ -30,20 +30,14 @@ public class Room extends Node {
     //****************************************
 
     /**
-     * Default constructor
-     */
-    public Room() {
-        pushTransform(new Transform.Scale(4.0f, 2.0f, 4.0f));
-    }
-
-    /**
      * Constructor add textures with
      * @param textures
      */
     public Room(Texture[] textures) {
         super(textures);
 
-
+        pushTransform(new Transform.Scale(2.0f, 1.0f, 2.0f));
+        pushTransform(new Transform.Translate(0.0f, 1.0f, 1.0f));
     }
 
 
@@ -60,8 +54,34 @@ public class Room extends Node {
     protected void depict(GL2 gl) {
 
         // Create cube to represent the room
+        // Fill each face with a texture
+        Cube.fillFace(gl, 1, getTexture(0));
+        Cube.fillFace(gl, 2, getTexture(0));
+        Cube.fillFace(gl, 3, getTexture(0));
+        Cube.fillFace(gl, 4, getTexture(0));
 
-        // TODO: Adjust to fill each face with a texture
-        Cube.fill(gl);
+        // TODO:
+    }
+
+
+    //****************************************
+    // Inner Classes
+    //****************************************
+
+    /**
+     * An inner class used to represent a window in the room
+     * Should use a transformed version of a cube
+     */
+    public static class Window extends Node {
+
+    }
+
+
+    /**
+     * An inner class used to represent a lamp in the room
+     * Will act as the light source for the room
+     */
+    public static class Lamp extends Node {
+
     }
 }
