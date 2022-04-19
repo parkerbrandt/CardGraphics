@@ -2,15 +2,27 @@ package edu.ou.cs.cg.project.scene;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
+
 import edu.ou.cs.cg.utilities.Cube;
 import edu.ou.cs.cg.utilities.Node;
+import edu.ou.cs.cg.utilities.Transform;
 
+
+/**
+ * The Room Class
+ * Represents a Cubic room with walls and floor
+ *
+ * TODO: Add window with city background
+ *
+ * @author Parker Brandt
+ */
 public class Room extends Node {
 
     //****************************************
-    // Private Variables
+    // Private Class Members
     //****************************************
-    private Cube room;
+
+    private static final String CITY_IMAGE = "images/city.jpg";
 
 
     //****************************************
@@ -21,7 +33,7 @@ public class Room extends Node {
      * Default constructor
      */
     public Room() {
-
+        pushTransform(new Transform.Scale(4.0f, 2.0f, 4.0f));
     }
 
     /**
@@ -30,6 +42,7 @@ public class Room extends Node {
      */
     public Room(Texture[] textures) {
         super(textures);
+
 
     }
 
@@ -46,5 +59,9 @@ public class Room extends Node {
     @Override
     protected void depict(GL2 gl) {
 
+        // Create cube to represent the room
+
+        // TODO: Adjust to fill each face with a texture
+        Cube.fill(gl);
     }
 }

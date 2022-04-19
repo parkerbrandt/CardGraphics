@@ -11,6 +11,8 @@ import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
+import edu.ou.cs.cg.project.scene.Card;
+import edu.ou.cs.cg.project.scene.Room;
 import edu.ou.cs.cg.utilities.Node;
 
 import java.awt.*;
@@ -248,6 +250,15 @@ public class View implements GLEventListener {
     // Scene Methods
     public void initScene(GLAutoDrawable drawable) {
 
+        // TODO: Create cubic stage
+        Room stage = new Room();
+        root.add(stage);
+
+        // Create the default card
+        Card main = new Card();
+        root.add(main);
+
+        // TODO: Iterate through each file in images/cards and show on a shelf
     }
 
 
@@ -255,5 +266,15 @@ public class View implements GLEventListener {
     // Getters and Setters
     //****************************************
 
+    public GLJPanel getCanvas() {
+        return canvas;
+    }
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
 }

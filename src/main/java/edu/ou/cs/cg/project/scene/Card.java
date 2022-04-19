@@ -24,6 +24,7 @@ public class Card extends Node {
     //****************************************
     private static final String TREE_IMG_FILE =     "images/tree.jpg";
     private static final String TREE_TRUNK_FILE =   "images/trunk.jpg";
+    private static final String APPLE_IMG_FILE =    "images/apple.jpg";
 
     //****************************************
     // Private Variables
@@ -130,7 +131,8 @@ public class Card extends Node {
                 rotateAngle -= 5;
         }
 
-
+        // Create the back part of the card
+        // TODO: Could create card sides as cubes and bind textures
     }
 
 
