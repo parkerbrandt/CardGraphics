@@ -255,7 +255,7 @@ public class View implements GLEventListener {
         root.add(stage);
 
         // Create the default card
-        Card main = new Card();
+        Card main = new Card(this, model);
         root.add(main);
 
         // TODO: Iterate through each file in images/cards and show on a shelf

@@ -74,6 +74,7 @@ public class KeyHandler extends KeyAdapter {
 
             // Open/Close the card
             case KeyEvent.VK_SPACE:
+                model.setCardOpen(!model.isCardOpen());
                 break;
 
             default:

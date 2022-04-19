@@ -20,6 +20,9 @@ public class Model {
     //****************************************
     private final View view;
 
+    // TODO: Other variables
+    private boolean isCardOpen;
+
 
     //****************************************
     // Constructors
@@ -27,12 +30,25 @@ public class Model {
     public Model(View view) {
         // Initialize variables
         this.view = view;
+
+        isCardOpen = false;
     }
 
 
     //****************************************
     // Getters and Setters
     //****************************************
+
+    // Getters
+    public boolean isCardOpen() {
+        return isCardOpen;
+    }
+
+
+    // Setters
+    public void setCardOpen(boolean isCardOpen) {
+        this.isCardOpen = isCardOpen;
+    }
 
 
 

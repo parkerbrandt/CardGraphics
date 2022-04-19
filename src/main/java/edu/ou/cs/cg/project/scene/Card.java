@@ -1,6 +1,8 @@
 package edu.ou.cs.cg.project.scene;
 
 import com.jogamp.opengl.GL2;
+import edu.ou.cs.cg.project.Model;
+import edu.ou.cs.cg.project.View;
 import edu.ou.cs.cg.utilities.Node;
 import edu.ou.cs.cg.utilities.Point3D;
 
@@ -29,6 +31,9 @@ public class Card extends Node {
     //****************************************
     // Private Variables
     //****************************************
+    private View    view;               // The corresponding view class
+    private Model   model;              // The corresponding model class
+
     private int     id;                 // The unique ID of the card
     private Color   outColor;           // The color of the outside of the card
     private Color   inColor;            // The color of the inside of the card
@@ -62,9 +67,12 @@ public class Card extends Node {
      * Default Constructor
      * Creates a base card in the user's hand
      */
-    public Card() {
+    public Card(View view, Model model) {
 
         // Initialize variables
+        this.view = view;
+        this.model = model;
+
         Random rand = new Random();
         this.id = rand.nextInt(1000);
 
@@ -79,10 +87,11 @@ public class Card extends Node {
 
 
         // Add some default text
+        text = new ArrayList<>();
         text.add("The Default Card");
 
         // Add two trees to the inside
-
+        trees = new ArrayList<>();
 
         // Start the day/night cycle
         time = 0;
@@ -92,9 +101,12 @@ public class Card extends Node {
      * Loads a card from a CSV file and initializes data
      * @param filename the file location/name
      */
-    public Card(String filename) {
+    public Card(String filename, View view, Model model) {
 
         // Initialize variables
+        this.view = view;
+        this.model = model;
+
         time = 0;
 
         // Load the data from a file
@@ -133,6 +145,14 @@ public class Card extends Node {
 
         // Create the back part of the card
         // TODO: Could create card sides as cubes and bind textures
+
+        gl.glColor3f((float)outColor.getRed()/255.0f, (float)outColor.getGreen()/255.0f, (float)outColor.getBlue()/255.0f);
+        gl.glBegin(GL2.GL_QUADS);
+
+        // Draw the "top" side of the card
+
+
+        gl.glEnd();
     }
 
 
