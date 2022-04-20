@@ -26,7 +26,9 @@ public class Room extends Node {
     //****************************************
     // Private Class Members
     //****************************************
-    private Lamp lamp;
+    private final Lamp lamp;
+    private final Window window;
+    private Shelf[] shelves;
 
 
     //****************************************
@@ -45,6 +47,13 @@ public class Room extends Node {
         lamp = new Lamp(textures, 32, new float[]{160.0f/255.0f, 160.0f/255.0f, 160.0f/255.0f, 1.0f});
         super.add(lamp);
 
+        // Create the window
+        window = new Window(textures);
+        super.add(window);
+
+        // TODO: Create three shelves
+        shelves = new Shelf[3];
+
         // Adjust the layout of the room
         pushTransform(new Transform.Scale(2.0f, 1.0f, 2.0f));
         pushTransform(new Transform.Translate(0.0f, 1.0f, 1.0f));
@@ -57,9 +66,7 @@ public class Room extends Node {
     //****************************************
 
     @Override
-    protected void change(GL2 gl) {
-
-    }
+    protected void change(GL2 gl) { }
 
     @Override
     protected void depict(GL2 gl) {
@@ -85,17 +92,29 @@ public class Room extends Node {
     public static class Window extends Node {
 
         //****************************************
-        // Private Variables
-        //****************************************
-
-
-        //****************************************
         // Constructors
         //****************************************
         public Window(Texture[] textures) {
             super(textures);
 
+            pushTransform(new Transform.Translate(10.2f, 0.0f, -0.1f));
+            pushTransform(new Transform.Scale(0.05f, 0.5f, 0.5f));
+        }
 
+
+        //****************************************
+        // Node Override Methods
+        //****************************************
+        @Override
+        protected void change(GL2 gl) { }
+
+        @Override
+        protected void depict(GL2 gl) {
+
+            // Use an altered cube to depict the window
+            Cube.fill(gl);
+
+            // TODO: Fill each face of cube
         }
     }
 
@@ -150,5 +169,13 @@ public class Room extends Node {
      */
     public static class Shelf extends Node {
 
+        //****************************************
+        // Constructors
+        //****************************************
+        public Shelf(Texture[] textures) {
+            super(textures);
+
+
+        }
     }
 }
