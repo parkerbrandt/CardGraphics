@@ -44,15 +44,29 @@ public class Room extends Node {
 
         // Create the lamp for the room that emits a yellow-whitish color
         //new float[]{1.0f, 1.6f, 204.0f/255.0f, 0.0f}
-        lamp = new Lamp(textures, 32, new float[]{160.0f/255.0f, 160.0f/255.0f, 160.0f/255.0f, 1.0f});
+        lamp = new Lamp(textures, new float[]{160.0f/255.0f, 160.0f/255.0f, 160.0f/255.0f, 1.0f});
         super.add(lamp);
 
         // Create the window
         window = new Window(textures);
         super.add(window);
 
-        // TODO: Create three shelves
+        // Create three shelves to display the cards on
         shelves = new Shelf[3];
+        shelves[0] = new Shelf(textures);
+        shelves[0].pushTransform(new Transform.Translate(0.0f, 3.0f, -1.0f));
+        shelves[0].pushTransform(new Transform.Scale(0.5f, 0.07f, 0.5f));
+        super.add(shelves[0]);
+
+        shelves[1] = new Shelf(textures);
+        shelves[1].pushTransform(new Transform.Translate(0.0f, 0.0f, -1.0f));
+        shelves[1].pushTransform(new Transform.Scale(0.5f, 0.07f, 0.5f));
+        super.add(shelves[1]);
+
+        shelves[2] = new Shelf(textures);
+        shelves[2].pushTransform(new Transform.Translate(0.0f, -3.0f, -1.0f));
+        shelves[2].pushTransform(new Transform.Scale(0.5f, 0.07f, 0.5f));
+        super.add(shelves[2]);
 
         // Adjust the layout of the room
         pushTransform(new Transform.Scale(2.0f, 1.0f, 2.0f));
@@ -114,7 +128,8 @@ public class Room extends Node {
             // Use an altered cube to depict the window
             Cube.fill(gl);
 
-            // TODO: Fill each face of cube
+            // TODO: Fill each face of cube with a texture
+
         }
     }
 
@@ -128,23 +143,17 @@ public class Room extends Node {
         //****************************************
         // Private Variables
         //****************************************
-
-        private Cylinder cylinder;
-        private final int sides;
         private final float[] emit;
 
 
         //****************************************
         // Constructors
         //****************************************
-        public Lamp(Texture[] textures, int sides, float[] emit) {
+        public Lamp(Texture[] textures, float[] emit) {
             super(textures);
 
             // Initialize variables
-            this.sides = sides;
             this.emit = emit;
-
-            cylinder = new Cylinder(sides, 0.0f, 1.0f);
 
             // Move the cylinder to the back left corner
             pushTransform(new Transform.Translate(-1.0f, 0.0f, -1.0f));
@@ -174,8 +183,20 @@ public class Room extends Node {
         //****************************************
         public Shelf(Texture[] textures) {
             super(textures);
+        }
 
 
+        //****************************************
+        // Node Override Methods
+        //****************************************
+        @Override
+        protected void change(GL2 gl) { }
+
+        @Override
+        protected void depict(GL2 gl) {
+            // Use the same wood texture as the floor to texture the shelves
+            for(int i = 0; i < 6; i++)
+                Cube.fillFace(gl, i, getTexture(1));
         }
     }
 }
