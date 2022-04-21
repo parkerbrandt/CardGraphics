@@ -17,8 +17,10 @@ import edu.ou.cs.cg.project.scene.Room;
 import edu.ou.cs.cg.utilities.Node;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Random;
 
 
@@ -38,7 +40,9 @@ public class View implements GLEventListener {
     private static final String RSRC = "/images/";               // Resource folder location
     private static final String[] FILENAMES =
             {
-                    "wall.jpg"         // Image used to texture the walls
+                    "wall.jpg",           // Image used to texture the walls
+                    "floor.jpg",          // Image used to texture the floor and shelves of the room
+                    "paper.jpg",          // Texture of the actual cards
                     //"window.jpg",       // Transparent window put over the city image
                     //"city.jpg",         // The city image used to show the "outside" world
                     //"ceiling.jpg",      // Image used to texture the ceiling
@@ -172,7 +176,7 @@ public class View implements GLEventListener {
         gl.glEnable(GL2.GL_NORMALIZE);      // Normalize normals before lighting
         gl.glShadeModel(GL2.GL_SMOOTH);     // Smooth (Gouraud) shading
 
-        // TODO: Add ambient light from a lamp
+        gl.glEnable(GL2.GL_COLOR_MATERIAL); // Allow coloring
     }
 
     /**
@@ -204,8 +208,6 @@ public class View implements GLEventListener {
                     0.0, 1.0, 0.0,        // Focal point coordinates
                     0.0, 1.0, 0.0);              // "up" vector
 
-        // TODO: Change camera position and angle of rotation
-
     }
 
     /**
@@ -222,7 +224,6 @@ public class View implements GLEventListener {
         for(int i = 0; i < FILENAMES.length; i++) {
             try {
                 URL url = View.class.getResource(RSRC + FILENAMES[i]);
-                System.out.println(url);
 
                 if(url != null) {
                     // Create the texture from a JPG file
@@ -278,7 +279,7 @@ public class View implements GLEventListener {
         renderer.beginRendering(width, height);
 
         // Draw text in white
-        renderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+        renderer.setColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         // Draw instructions on the left side if
         String instruct = "Instructions";
@@ -302,10 +303,27 @@ public class View implements GLEventListener {
         root.add(stage);
 
         // Create the default card
-        // Card main = new Card(this, model);
-        // root.add(main);
+        Card main = new Card(this, model);
+        root.add(main);
 
         // TODO: Iterate through each file in images/cards and show on a shelf
+        ArrayList<Card> displayCards = new ArrayList<>();
+
+        File dir = new File("/images/cards/");
+        File[] directoryListing = dir.listFiles();
+        if(directoryListing != null) {
+            for(File card : directoryListing) {
+                displayCards.add(new Card(card.toString(), this, model));
+            }
+        }
+
+        if(displayCards.size() > 9) {
+            for(int i = displayCards.size() - 1; i > 9; i--) {
+                displayCards.remove(9);
+            }
+        }
+
+
     }
 
 
