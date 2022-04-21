@@ -3,9 +3,11 @@ package edu.ou.cs.cg.project;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLRunnable;
+import edu.ou.cs.cg.project.scene.Card;
 import edu.ou.cs.cg.utilities.Utilities;
 
 import java.awt.*;
+import java.io.*;
 
 /**
  * The Model Class
@@ -21,7 +23,12 @@ public class Model {
     private final View view;
 
     // TODO: Other variables
-    private boolean isCardOpen;
+    private boolean isCardOpen;         // Used to show if the card is open or not
+    private boolean showInstructions;   // Used to show if the instructions should be open or not
+    private boolean isEditMode;         // Use to determine if the user is editing the card or not
+
+    private final Color[] cardColors;   // List of all available card colors
+    private int currentColor;           // Current index of selected color
 
 
     //****************************************
@@ -32,7 +39,58 @@ public class Model {
         this.view = view;
 
         isCardOpen = false;
+        showInstructions = false;
+        isEditMode = false;
+
+        cardColors = new Color[]{   new Color(198, 41, 41, 255),
+                                    new Color(0, 102, 0, 255),
+                                    new Color(26, 62, 161)
+                                };
+        currentColor = 0;
     }
+
+
+    //****************************************
+    // Private Methods
+    //****************************************
+
+    // File save/load methods
+    /**
+     * Save the card data to a file
+     * @param filename
+     * @throws IOException
+     */
+    public void save(String filename) throws IOException {
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+    }
+
+    /**
+     * Read the card data from the specified filename
+     * @param filename
+     * @throws IOException
+     */
+    public Card load(String filename) throws IOException {
+
+        BufferedReader reader = new BufferedReader(new FileReader(filename));
+        String line = "";
+        while((line = reader.readLine()) != null) {
+
+        }
+
+        return new Card(view, this);
+    }
+
+
+    // Card Modification Methods
+
+    /**
+     * Switch the currently selected color of the current card
+     */
+    public void switchColor() {
+        currentColor = currentColor == cardColors.length-1 ? 0 : currentColor + 1;
+    }
+
 
 
     //****************************************
@@ -44,10 +102,22 @@ public class Model {
         return isCardOpen;
     }
 
+    public boolean showInstructions() {
+        return showInstructions;
+    }
+
+    public Color getCardColor() {
+        return cardColors[currentColor];
+    }
+
 
     // Setters
     public void setCardOpen(boolean isCardOpen) {
         this.isCardOpen = isCardOpen;
+    }
+
+    public void setShowInstructions(boolean shouldShow) {
+        showInstructions = shouldShow;
     }
 
 

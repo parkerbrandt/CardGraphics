@@ -61,6 +61,7 @@ public class KeyHandler extends KeyAdapter {
 
             // If in edit mode, shift through some predetermined colors for outside of the card
             case KeyEvent.VK_C:
+                model.switchColor();
                 break;
 
             // Save card to the next open slot, if none available delete #1
@@ -75,6 +76,11 @@ public class KeyHandler extends KeyAdapter {
             // Open/Close the card
             case KeyEvent.VK_SPACE:
                 model.setCardOpen(!model.isCardOpen());
+                break;
+
+            // Open/Close the instructions
+            case KeyEvent.VK_ESCAPE:
+                model.setShowInstructions(!model.showInstructions());
                 break;
 
             default:
