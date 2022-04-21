@@ -5,6 +5,7 @@ import edu.ou.cs.cg.project.Model;
 import edu.ou.cs.cg.project.View;
 import edu.ou.cs.cg.utilities.Node;
 import edu.ou.cs.cg.utilities.Point3D;
+import edu.ou.cs.cg.utilities.Transform;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -35,8 +36,8 @@ public class Card extends Node {
     private Model   model;              // The corresponding model class
 
     private int     id;                 // The unique ID of the card
-    private Color   outColor;           // The color of the outside of the card
-    private Color   inColor;            // The color of the inside of the card
+
+    private Color inColor;              // The color of the inside of the card - will always be the same
 
     private boolean isOpen;             // Decide if the card is open or closed
     private int rotateAngle;            // The amount the front face of card is opened
@@ -50,13 +51,6 @@ public class Card extends Node {
     private ArrayList<Point2D.Double> trees;    // The location of all trees on the inside of the card
 
     private int time;       // The time of day on the card - ranges from 0 to 1800 (30 seconds) for day/night cycle
-
-
-    //****************************************
-    // Public Variables
-    //****************************************
-
-
 
 
     //****************************************
@@ -76,8 +70,8 @@ public class Card extends Node {
         Random rand = new Random();
         this.id = rand.nextInt(1000);
 
-        outColor = new Color(255, 0, 0);
-        inColor = new Color(255, 230, 230);
+        // Load the tree, trunk, and apple images
+
 
         // Initialize location and dimensions of the card
 
@@ -111,11 +105,13 @@ public class Card extends Node {
 
         // Load the data from a file
         try {
-            load(filename);
+            model.load(filename);
         } catch(IOException e) {
             e.printStackTrace();
         }
 
+        // TODO: Display on shelf
+        int cardIndex;
     }
 
 
@@ -134,6 +130,9 @@ public class Card extends Node {
         // Update the day/night cycle
         time++;
 
+        // Determine to alter the colors on the sky of the card by the time
+
+
         // Determine if card should be opened or not
         if(isOpen) {
             if(rotateAngle < 180)
@@ -143,16 +142,20 @@ public class Card extends Node {
                 rotateAngle -= 5;
         }
 
-        // Create the back part of the card
+        // pushTransform(new Transform.Rotate(0.0f, 1.0f, 0.0f, rotateAngle));
+
         // TODO: Could create card sides as cubes and bind textures
+        // TODO: Let user just look at the room
+        // TODO: Need to add check where to show card
 
-        gl.glColor3f((float)outColor.getRed()/255.0f, (float)outColor.getGreen()/255.0f, (float)outColor.getBlue()/255.0f);
-        gl.glBegin(GL2.GL_QUADS);
+        // pushTransform(new Transform.Scale(0.1f, 0.3f, 0.01f));
 
-        // Draw the "top" side of the card
+        // The "front" of the card
+        // TODO: Implement a Front and Back class or just two cubes
+
+        // The "back" of the card
 
 
-        gl.glEnd();
     }
 
 
@@ -160,30 +163,14 @@ public class Card extends Node {
     // Private Methods
     //****************************************
 
-    // File save/load methods
-
     /**
-     * Save the card data to a file
-     * @param filename
-     * @throws IOException
+     * Copies the colors and designs of the card
+     * @param toCopy
      */
-    public void save(String filename) throws IOException {
+    public void copyCard(Card toCopy) {
 
-        BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-    }
+        // Adjust the variables of this card to match that of the copy card
 
-    /**
-     * Read the card data from the specified filename
-     * @param filename
-     * @throws IOException
-     */
-    public void load(String filename) throws IOException {
-
-        BufferedReader reader = new BufferedReader(new FileReader(filename));
-        String line = "";
-        while((line = reader.readLine()) != null) {
-
-        }
     }
 
 
@@ -192,20 +179,8 @@ public class Card extends Node {
     //****************************************
 
     // Getters
-    public Color getOutColor() {
-        return outColor;
+    public int getId() {
+        return id;
     }
-
-    public Color getInColor() {
-        return inColor;
-    }
-
-    public Point3D getLoc() {
-        return loc;
-    }
-
-
-    // Setters
-
 
 }
