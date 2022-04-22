@@ -1,8 +1,10 @@
 package edu.ou.cs.cg.project.scene;
 
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.util.texture.Texture;
 import edu.ou.cs.cg.project.Model;
 import edu.ou.cs.cg.project.View;
+import edu.ou.cs.cg.utilities.Cube;
 import edu.ou.cs.cg.utilities.Node;
 import edu.ou.cs.cg.utilities.Point3D;
 import edu.ou.cs.cg.utilities.Transform;
@@ -37,6 +39,9 @@ public class Card extends Node {
 
     private int     id;                 // The unique ID of the card
 
+    private CardSide front;
+    private CardSide back;
+
     private Color inColor;              // The color of the inside of the card - will always be the same
 
     private boolean isOpen;             // Decide if the card is open or closed
@@ -61,7 +66,8 @@ public class Card extends Node {
      * Default Constructor
      * Creates a base card in the user's hand
      */
-    public Card(View view, Model model) {
+    public Card(Texture[] textures, View view, Model model) {
+        super(textures);
 
         // Initialize variables
         this.view = view;
@@ -70,11 +76,19 @@ public class Card extends Node {
         Random rand = new Random();
         this.id = rand.nextInt(1000);
 
+        // Create the two parts of card
+        // The "front" of the card
+        front = new CardSide(textures, view, model);
+        front.pushTransform(new Transform.Scale(0.1f, 0.5f, 0.01f));
+        this.add(front);
+
+        // The "back" of the card - should always be slightly "behind" the front
+        back = new CardSide(textures, view, model);
+        back.pushTransform(new Transform.Translate(0.0f, 0.0f, 0.1f));
+        back.pushTransform(new Transform.Scale(0.1f, 0.5f, 0.01f));
+        this.add(back);
+
         // Load the tree, trunk, and apple images
-
-
-        // Initialize location and dimensions of the card
-
 
         isOpen = false;
         rotateAngle = 0;
@@ -95,7 +109,8 @@ public class Card extends Node {
      * Loads a card from a CSV file and initializes data
      * @param filename the file location/name
      */
-    public Card(String filename, View view, Model model) {
+    public Card(String filename, Texture[] textures, View view, Model model) {
+        super(textures);
 
         // Initialize variables
         this.view = view;
@@ -105,7 +120,7 @@ public class Card extends Node {
 
         // Load the data from a file
         try {
-            model.load(filename);
+            model.load(filename, textures);
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -127,35 +142,10 @@ public class Card extends Node {
     @Override
     protected void depict(GL2 gl) {
 
-        // Update the day/night cycle
-        time++;
-
-        // Determine to alter the colors on the sky of the card by the time
-
-
-        // Determine if card should be opened or not
-        if(isOpen) {
-            if(rotateAngle < 180)
-                rotateAngle += 5;
-        } else {
-            if(rotateAngle > 15)
-                rotateAngle -= 5;
-        }
-
-        // pushTransform(new Transform.Rotate(0.0f, 1.0f, 0.0f, rotateAngle));
-
-        // TODO: Could create card sides as cubes and bind textures
-        // TODO: Let user just look at the room
-        // TODO: Need to add check where to show card
-
-        // pushTransform(new Transform.Scale(0.1f, 0.3f, 0.01f));
-
-        // The "front" of the card
-        // TODO: Implement a Front and Back class or just two cubes
-
-        // The "back" of the card
-
-
+        // Depict the front and back of the card
+        // TODO: Rotate front by value in thing
+        front.depict(gl);
+        back.depict(gl);
     }
 
 
@@ -183,4 +173,53 @@ public class Card extends Node {
         return id;
     }
 
+
+    /**
+     * Inner Class to represent each side of a card
+     */
+    public static class CardSide extends Node {
+
+        //****************************************
+        // Private Variables
+        //****************************************
+        private View view;
+        private Model model;
+
+
+        //****************************************
+        // Constructors
+        //****************************************
+        public CardSide(Texture[] textures, View view, Model model) {
+            super(textures);
+
+            // Initialize variables
+            this.view = view;
+            this.model = model;
+
+            // Scale the card to the appropriate size for a card
+            pushTransform(new Transform.Scale(0.1f, 0.0f, 0.01f));
+        }
+
+
+        //****************************************
+        // Node Override Methods
+        //****************************************
+        @Override
+        protected void depict(GL2 gl) {
+
+            // Depict as transformed cube with paper texture
+
+            // Get the color of the outside of the card
+            // TODO: Make inside of card always white
+            Color out = model.getCardColor();
+            gl.glColor3f((float)out.getRed()/255.0f, (float)out.getGreen()/255.0f, (float)out.getBlue()/255.0f);
+
+            Cube.fillFace(gl, 0, getTexture(2));
+            Cube.fillFace(gl, 1, getTexture(2));
+            Cube.fillFace(gl, 2, getTexture(2));
+            Cube.fillFace(gl, 3, getTexture(2));
+            Cube.fillFace(gl, 4, getTexture(2));
+            Cube.fillFace(gl, 5, getTexture(2));
+        }
+    }
 }
