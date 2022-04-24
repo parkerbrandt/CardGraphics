@@ -43,7 +43,7 @@ public class Card extends Node {
 
     private ArrayList<String>  text;     // All text on the card
 
-    private ArrayList<Point2D.Double> trees;    // The location of all trees on the inside of the card
+    private ArrayList<CardImage> trees;    // The location of all trees on the inside of the card
 
     private int time;                    // The time of day on the card - ranges from 0 to 1800 (30 seconds) for day/night cycle
 
@@ -75,14 +75,16 @@ public class Card extends Node {
         this.pushTransform(new Transform.Translate(0.0f, -0.5f, 0.5f));
 
         // The "front" of the card
-
         front = new CardSide(textures, view, model);
         front.pushTransform(new Transform.Scale(0.5f, 0.8f, 0.01f));
         this.add(front);
 
         // The "back" of the card - should always be slightly "behind" the front
+        // Flip the back and push back
         back = new CardSide(textures, view, model);
         back.pushTransform(new Transform.Scale(0.5f, 0.8f, 0.01f));
+        back.pushTransform(new Transform.Rotate(0.0f, 1.0f, 0.0f, 180));
+        back.pushTransform(new Transform.Translate(0.5f, 0.0f, -0.02f));
         this.add(back);
 
         // Add some default text
@@ -207,6 +209,21 @@ public class Card extends Node {
 
 
         //****************************************
+        // Public Methods
+        //****************************************
+
+        /**
+         * Add an image to the images array and add to this object
+         * @param image
+         */
+        public void addImage(CardImage image) {
+            images.add(image);
+
+            this.add(image);
+        }
+
+
+        //****************************************
         // Node Override Methods
         //****************************************
         @Override
@@ -219,17 +236,21 @@ public class Card extends Node {
             gl.glColor3f((float)out.getRed()/255.0f, (float)out.getGreen()/255.0f, (float)out.getBlue()/255.0f);
 
             Cube.fillFace(gl, 0, getTexture(2));
+
+            // Color the inside of the card white
+            gl.glColor3f(1.0f, 1.0f, 1.0f);
+
             Cube.fillFace(gl, 1, getTexture(2));
             Cube.fillFace(gl, 2, getTexture(2));
             Cube.fillFace(gl, 3, getTexture(2));
             Cube.fillFace(gl, 4, getTexture(2));
             Cube.fillFace(gl, 5, getTexture(2));
 
-            // Color the inside of the card white - may be able to use just some quads for a cartoony look
-            gl.glColor3f(1.0f, 1.0f, 1.0f);
-            gl.glBegin(GL2.GL_QUADS);
 
-            gl.glEnd();
+            // Draw all the images for this side of the card
+            for(CardImage image : images) {
+                image.render(gl);
+            }
         }
     }
 
