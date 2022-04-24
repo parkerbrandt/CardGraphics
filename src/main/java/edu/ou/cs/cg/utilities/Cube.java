@@ -54,15 +54,15 @@ public final class Cube
 
 	public static final Quaternion[]	VERTICES = new Quaternion[]
 	{
-		new Quaternion(-0.5f, -0.5f,  0.5f,  1.0f),
-		new Quaternion( 0.5f, -0.5f,  0.5f,  1.0f),
-		new Quaternion( 0.5f,  0.5f,  0.5f,  1.0f),
-		new Quaternion(-0.5f,  0.5f,  0.5f,  1.0f),
+		new Quaternion(0.0f, 0.0f, 1.0f,  1.0f),
+		new Quaternion(1.0f, 0.0f, 1.0f,  1.0f),
+		new Quaternion(1.0f, 1.0f, 1.0f,  1.0f),
+		new Quaternion(0.0f, 1.0f, 1.0f,  1.0f),
 
-		new Quaternion(-0.5f, -0.5f, -0.5f,  1.0f),
-		new Quaternion( 0.5f, -0.5f, -0.5f,  1.0f),
-		new Quaternion( 0.5f,  0.5f, -0.5f,  1.0f),
-		new Quaternion(-0.5f,  0.5f, -0.5f,  1.0f),
+		new Quaternion(0.0f, 0.0f, 0.0f,  1.0f),
+		new Quaternion(1.0f, 0.0f, 0.0f,  1.0f),
+		new Quaternion(1.0f, 1.0f, 0.0f,  1.0f),
+		new Quaternion(0.0f, 1.0f, 0.0f,  1.0f),
 	};
 
 	public static final int[][]		FACES = new int[][]
