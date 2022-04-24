@@ -131,7 +131,7 @@ public class Card extends Node {
     @Override
     protected void depict(GL2 gl) {
 
-        // TODO: Get card translation
+        // TODO: Get card translation from model
 
         // Rotate the front face of the card
         if(model.isCardOpen()) {
@@ -242,17 +242,29 @@ public class Card extends Node {
         //****************************************
         // Private Variables
         //****************************************
-
+        private int index;
 
         //****************************************
         // Constructors
         //****************************************
+
+        public CardImage(int index, Texture[] textures) {
+            super(textures);
+
+            // Initialize variables
+            this.index = index;
+        }
 
 
         //****************************************
         // Node Override Methods
         //****************************************
 
+        @Override
+        protected void depict(GL2 gl) {
 
+            // Draw the image on a Cube
+            Cube.fillFace(gl, 0, getTexture(index));
+        }
     }
 }
