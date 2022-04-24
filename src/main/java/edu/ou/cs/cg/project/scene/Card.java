@@ -1,6 +1,7 @@
 package edu.ou.cs.cg.project.scene;
 
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.texture.Texture;
 import edu.ou.cs.cg.project.Model;
 import edu.ou.cs.cg.project.View;
@@ -34,10 +35,13 @@ public class Card extends Node {
     //****************************************
     // Private Variables
     //****************************************
-    private View    view;               // The corresponding view class
-    private Model   model;              // The corresponding model class
+    private final View          view;               // The corresponding view class
+    private final Model         model;              // The corresponding model class
+    private final TextRenderer  renderer;           // The text renderer
 
     private int     id;                 // The unique ID of the card
+
+    private int     cardIndex;          // The index of the card - used to determine if this is the "main" card
 
     private CardSide front;
     private CardSide back;
@@ -55,7 +59,7 @@ public class Card extends Node {
 
     private ArrayList<Point2D.Double> trees;    // The location of all trees on the inside of the card
 
-    private int time;       // The time of day on the card - ranges from 0 to 1800 (30 seconds) for day/night cycle
+    private int time;                    // The time of day on the card - ranges from 0 to 1800 (30 seconds) for day/night cycle
 
 
     //****************************************
@@ -72,27 +76,30 @@ public class Card extends Node {
         // Initialize variables
         this.view = view;
         this.model = model;
+        this.renderer = view.getRenderer();
 
         Random rand = new Random();
         this.id = rand.nextInt(1000);
 
-        // Create the two parts of card
-        // The "front" of the card
-        front = new CardSide(textures, view, model);
-        front.pushTransform(new Transform.Scale(0.1f, 0.5f, 0.01f));
-        this.add(front);
-
-        // The "back" of the card - should always be slightly "behind" the front
-        back = new CardSide(textures, view, model);
-        back.pushTransform(new Transform.Translate(0.0f, 0.0f, 0.1f));
-        back.pushTransform(new Transform.Scale(0.1f, 0.5f, 0.01f));
-        this.add(back);
-
-        // Load the tree, trunk, and apple images
+        cardIndex = 0;
 
         isOpen = false;
         rotateAngle = 0;
 
+
+        // Create the two parts of card
+        this.pushTransform(new Transform.Translate(0.2f, 0.0f, 0.0f));
+
+        // The "front" of the card
+
+        front = new CardSide(textures, view, model);
+        front.pushTransform(new Transform.Scale(0.7f, 1.0f, 0.01f));
+        this.add(front);
+
+        // The "back" of the card - should always be slightly "behind" the front
+        back = new CardSide(textures, view, model);
+        back.pushTransform(new Transform.Scale(0.7f, 1.0f, 0.01f));
+        this.add(back);
 
         // Add some default text
         text = new ArrayList<>();
@@ -109,12 +116,15 @@ public class Card extends Node {
      * Loads a card from a CSV file and initializes data
      * @param filename the file location/name
      */
-    public Card(String filename, Texture[] textures, View view, Model model) {
+    public Card(String filename, Texture[] textures, View view, Model model, int index) {
         super(textures);
 
         // Initialize variables
         this.view = view;
         this.model = model;
+        this.renderer = view.getRenderer();
+
+        cardIndex = index;
 
         time = 0;
 
@@ -124,9 +134,6 @@ public class Card extends Node {
         } catch(IOException e) {
             e.printStackTrace();
         }
-
-        // TODO: Display on shelf
-        int cardIndex;
     }
 
 
@@ -142,10 +149,25 @@ public class Card extends Node {
     @Override
     protected void depict(GL2 gl) {
 
-        // Depict the front and back of the card
-        // TODO: Rotate front by value in thing
-        front.depict(gl);
-        back.depict(gl);
+        // TODO: Get card translation
+
+
+        // Rotate the front face of the card
+        if(model.isCardOpen()) {
+            if(rotateAngle <= 180) {
+                rotateAngle += 2;
+                front.pushTransform(new Transform.Rotate(0.0f, 1.0f, 0.0f, -2));
+            }
+        } else {
+            if(rotateAngle >= 0) {
+                rotateAngle -= 2;
+                front.pushTransform(new Transform.Rotate(0.0f, 1.0f, 0.0f, 2));
+            }
+        }
+
+        // Render each side of the card
+        front.render(gl);
+        back.render(gl);
     }
 
 
@@ -195,9 +217,6 @@ public class Card extends Node {
             // Initialize variables
             this.view = view;
             this.model = model;
-
-            // Scale the card to the appropriate size for a card
-            pushTransform(new Transform.Scale(0.1f, 0.0f, 0.01f));
         }
 
 
@@ -210,7 +229,6 @@ public class Card extends Node {
             // Depict as transformed cube with paper texture
 
             // Get the color of the outside of the card
-            // TODO: Make inside of card always white
             Color out = model.getCardColor();
             gl.glColor3f((float)out.getRed()/255.0f, (float)out.getGreen()/255.0f, (float)out.getBlue()/255.0f);
 
@@ -220,6 +238,35 @@ public class Card extends Node {
             Cube.fillFace(gl, 3, getTexture(2));
             Cube.fillFace(gl, 4, getTexture(2));
             Cube.fillFace(gl, 5, getTexture(2));
+
+            // Color the inside of the card white - may be able to use just some quads for a cartoony look
+            gl.glColor3f(1.0f, 1.0f, 1.0f);
+            gl.glBegin(GL2.GL_QUADS);
+
+            gl.glEnd();
         }
+    }
+
+
+    /**
+     * Inner Class to represent the images that are rendered onto the card
+     */
+    public static class CardImage extends Node {
+
+        //****************************************
+        // Private Variables
+        //****************************************
+
+
+        //****************************************
+        // Constructors
+        //****************************************
+
+
+        //****************************************
+        // Node Override Methods
+        //****************************************
+
+
     }
 }
