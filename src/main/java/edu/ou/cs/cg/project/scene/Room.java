@@ -9,22 +9,14 @@ import edu.ou.cs.cg.utilities.*;
 /**
  * The Room Class
  * Represents a Cubic room with walls and floor
- *
- * TODO: Add window with city background
+ * Also handles the static elements displayed in the room represented by inner classes
  *
  * @author Parker Brandt
  */
 public class Room extends Node {
 
     //****************************************
-    // Private Class Members
-    //****************************************
-
-    private static final String CITY_IMAGE = "images/city.jpg";
-
-
-    //****************************************
-    // Private Class Members
+    // Private Variables
     //****************************************
     private final Lamp lamp;
     private final Window window;
@@ -54,23 +46,23 @@ public class Room extends Node {
         // Create three shelves to display the cards on
         shelves = new Shelf[3];
         shelves[0] = new Shelf(textures);
-        shelves[0].pushTransform(new Transform.Translate(0.0f, 3.0f, -1.0f));
+        shelves[0].pushTransform(new Transform.Translate(0.5f, 1.5f, -0.7f));
         shelves[0].pushTransform(new Transform.Scale(0.5f, 0.07f, 0.5f));
         super.add(shelves[0]);
 
         shelves[1] = new Shelf(textures);
-        shelves[1].pushTransform(new Transform.Translate(0.0f, 0.0f, -1.0f));
+        shelves[1].pushTransform(new Transform.Translate(0.5f, 5.0f, -0.7f));
         shelves[1].pushTransform(new Transform.Scale(0.5f, 0.07f, 0.5f));
         super.add(shelves[1]);
 
         shelves[2] = new Shelf(textures);
-        shelves[2].pushTransform(new Transform.Translate(0.0f, -3.0f, -1.0f));
+        shelves[2].pushTransform(new Transform.Translate(0.5f, 8.5f, -0.7f));
         shelves[2].pushTransform(new Transform.Scale(0.5f, 0.07f, 0.5f));
         super.add(shelves[2]);
 
         // Adjust the layout of the room
-        pushTransform(new Transform.Scale(2.0f, 1.0f, 2.0f));
-        pushTransform(new Transform.Translate(0.0f, 1.0f, 1.0f));
+        pushTransform(new Transform.Scale(1.5f, 1.0f, 2.0f));
+        pushTransform(new Transform.Translate(-0.7f, 0.5f, 1.0f));
 
     }
 
@@ -111,7 +103,7 @@ public class Room extends Node {
         public Window(Texture[] textures) {
             super(textures);
 
-            pushTransform(new Transform.Translate(10.2f, 0.0f, -0.1f));
+            pushTransform(new Transform.Translate(19.7f, 0.5f, -0.1f));
             pushTransform(new Transform.Scale(0.05f, 0.5f, 0.5f));
         }
 
@@ -156,7 +148,7 @@ public class Room extends Node {
             this.emit = emit;
 
             // Move the cylinder to the back left corner
-            pushTransform(new Transform.Translate(-1.0f, 0.0f, -1.0f));
+            pushTransform(new Transform.Translate(0.0f, 0.0f, -1.0f));
             pushTransform(new Transform.Rotate(0.0f, 0.0f, 1.0f, 90.0f));
         }
 
