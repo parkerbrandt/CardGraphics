@@ -26,13 +26,6 @@ import java.util.Random;
 public class Card extends Node {
 
     //****************************************
-    // Private Class Members
-    //****************************************
-    private static final String TREE_IMG_FILE =     "images/tree.jpg";
-    private static final String TREE_TRUNK_FILE =   "images/trunk.jpg";
-    private static final String APPLE_IMG_FILE =    "images/apple.jpg";
-
-    //****************************************
     // Private Variables
     //****************************************
     private final View          view;               // The corresponding view class
@@ -46,14 +39,7 @@ public class Card extends Node {
     private CardSide front;
     private CardSide back;
 
-    private Color inColor;              // The color of the inside of the card - will always be the same
-
-    private boolean isOpen;             // Decide if the card is open or closed
     private int rotateAngle;            // The amount the front face of card is opened
-
-    private Point3D loc;                // The x,y,z location of the bottom left of the card
-    private int width;                  // The width of each side of the card
-    private int height;                 // The height of each side of the card
 
     private ArrayList<String>  text;     // All text on the card
 
@@ -83,22 +69,20 @@ public class Card extends Node {
 
         cardIndex = 0;
 
-        isOpen = false;
         rotateAngle = 0;
 
-
         // Create the two parts of card
-        this.pushTransform(new Transform.Translate(0.2f, 0.0f, 0.0f));
+        this.pushTransform(new Transform.Translate(0.0f, -0.5f, 0.5f));
 
         // The "front" of the card
 
         front = new CardSide(textures, view, model);
-        front.pushTransform(new Transform.Scale(0.7f, 1.0f, 0.01f));
+        front.pushTransform(new Transform.Scale(0.5f, 0.8f, 0.01f));
         this.add(front);
 
         // The "back" of the card - should always be slightly "behind" the front
         back = new CardSide(textures, view, model);
-        back.pushTransform(new Transform.Scale(0.7f, 1.0f, 0.01f));
+        back.pushTransform(new Transform.Scale(0.5f, 0.8f, 0.01f));
         this.add(back);
 
         // Add some default text
@@ -142,15 +126,12 @@ public class Card extends Node {
     //****************************************
 
     @Override
-    protected void change(GL2 gl) {
-
-    }
+    protected void change(GL2 gl) { }
 
     @Override
     protected void depict(GL2 gl) {
 
         // TODO: Get card translation
-
 
         // Rotate the front face of the card
         if(model.isCardOpen()) {
@@ -164,6 +145,7 @@ public class Card extends Node {
                 front.pushTransform(new Transform.Rotate(0.0f, 1.0f, 0.0f, 2));
             }
         }
+
 
         // Render each side of the card
         front.render(gl);
@@ -207,6 +189,8 @@ public class Card extends Node {
         private View view;
         private Model model;
 
+        private ArrayList<CardImage> images;
+
 
         //****************************************
         // Constructors
@@ -217,6 +201,8 @@ public class Card extends Node {
             // Initialize variables
             this.view = view;
             this.model = model;
+
+            images = new ArrayList<>();
         }
 
 
