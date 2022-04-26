@@ -89,24 +89,35 @@ public class Card extends Node {
         // TODO: Check if there is a background image and if so, paste it on each side
 
         // Add a sun at the top
-        CardImage sun = new CardImage(6, textures);
+        CardImage sun = new CardImage(6, textures, model);
         sun.pushTransform(new Transform.Scale(0.25f, 0.25f, 1.0f));
         sun.pushTransform(new Transform.Translate(0.5f, 0.5f, -0.08f));
         //front.addImage(sun);
 
+        // TODO: Make list of trees to rotate in depict
         // Add two default trees with trunks to the inside of the card front
-        CardImage tree1 = new CardImage(3, textures);
+        CardImage tree1 = new CardImage(3, textures, model);
         tree1.pushTransform(new Transform.Scale(0.25f, 0.25f, 1.0f));
         tree1.pushTransform(new Transform.Translate(0.5f, 0.2f, -0.08f));
         front.addImage(tree1);
 
-        CardImage trunk1 = new CardImage(4, textures);
+        CardImage trunk1 = new CardImage(4, textures, model);
         trunk1.pushTransform(new Transform.Scale(0.25f, 0.25f, 1.0f));
         trunk1.pushTransform(new Transform.Translate(0.5f, 0.0f, -0.08f));
         front.addImage(trunk1);
 
 
-        // Add some default text
+        // Add some default text to the front
+        String[] frontText = new String[] { "Hello,", "Good Morning"};
+        CardText gm = new CardText(renderer, frontText);
+        gm.pushTransform(new Transform.Translate(0.2f, 0.3f, 1.2f));
+        gm.pushTransform(new Transform.Scale(0.8f, 0.8f, 1.0f));
+        front.addText(gm);
+
+        // Add some default text to the back inside part
+        String[] inside = new String[] { "Graphics", "Final Project"};
+        CardText in = new CardText(renderer, inside);
+        // back.addTe
 
 
         // Start the day/night cycle
@@ -149,6 +160,7 @@ public class Card extends Node {
     protected void depict(GL2 gl) {
 
         // Rotate the front face of the card
+        // Also rotate each tree
         if(model.isCardOpen()) {
             if(rotateAngle <= 180) {
                 rotateAngle += 2;
@@ -233,14 +245,10 @@ public class Card extends Node {
          */
         public void addImage(CardImage image) {
             images.add(image);
-
-            this.add(image);
         }
 
         public void addText(CardText string) {
             text.add(string);
-
-            this.add(string);
         }
 
 
@@ -252,6 +260,7 @@ public class Card extends Node {
 
             // Depict as transformed cube with paper texture
 
+            // TODO: Make getCardColor() have an index parameter to choose which card
             // Get the color of the outside of the card
             Color out = model.getCardColor();
             gl.glColor3f((float)out.getRed()/255.0f, (float)out.getGreen()/255.0f, (float)out.getBlue()/255.0f);
@@ -289,6 +298,7 @@ public class Card extends Node {
     }
 
 
+
     /**
      * Inner Class to represent the images that are rendered onto the card
      */
@@ -303,7 +313,7 @@ public class Card extends Node {
         // Constructors
         //****************************************
 
-        public CardImage(int index, Texture[] textures) {
+        public CardImage(int index, Texture[] textures, Model model) {
             super(textures);
 
             // Initialize variables
@@ -317,7 +327,23 @@ public class Card extends Node {
 
         @Override
         protected void change(GL2 gl) {
-            
+
+            // Check based on the texture how to make the image move
+            switch(index) {
+
+                // The sun - slowly move across the card when open
+                case 6:
+                    pushTransform(new Transform.Translate(0.01f, 0.0f, 0.0f));
+                    break;
+
+                // Clouds - also move slowly across card until hitting middle
+                case 7:
+                    pushTransform(new Transform.Translate(0.02f, 0.0f, 0.0f));
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         @Override
@@ -330,6 +356,7 @@ public class Card extends Node {
     }
 
 
+
     /**
      * Inner class to represent the text used on the inside and outside of the cards
      */
@@ -339,17 +366,30 @@ public class Card extends Node {
         // Private Variables
         //****************************************
         private TextRenderer renderer;
-        private String text;
+        private String[] text;
 
 
         //****************************************
         // Constructors
         //****************************************
 
-        public CardText(TextRenderer renderer, String text) {
+        public CardText(TextRenderer renderer, String[] text) {
             // Initialize variables
             this.renderer = renderer;
             this.text = text;
+        }
+
+
+        //****************************************
+        // Public Methods
+        //****************************************
+
+        /**
+         * Change the text of this
+         * @param newText
+         */
+        public void changeText(String[] newText) {
+            this.text = newText;
         }
 
 
@@ -359,7 +399,15 @@ public class Card extends Node {
 
         @Override
         protected void depict(GL2 gl) {
-            renderer.draw3D(text, 0.0f, 0.0f, 0.0f, 1.0f);
+
+            // Draw the text using 3D rendering
+            renderer.begin3DRendering();
+
+            for(int i = 0; i < text.length; i++) {
+                renderer.draw3D(text[i], 0.0f, 0.8f - (0.1f * i), 0.0f, 0.01f);
+            }
+
+            renderer.end3DRendering();
         }
     }
 }
