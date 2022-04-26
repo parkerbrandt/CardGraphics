@@ -86,20 +86,18 @@ public class Card extends Node {
         this.add(back);
 
 
-        // TODO: Check if there is a background image and if so, paste it on each side
-
         // Add a sun at the top
         CardImage sun = new CardImage(6, textures, model);
         sun.pushTransform(new Transform.Scale(0.25f, 0.25f, 1.0f));
         sun.pushTransform(new Transform.Translate(0.5f, 0.5f, -0.08f));
-        //front.addImage(sun);
+        front.addImage(sun);
 
         // TODO: Make list of trees to rotate in depict
         // Add two default trees with trunks to the inside of the card front
         CardImage tree1 = new CardImage(3, textures, model);
         tree1.pushTransform(new Transform.Scale(0.25f, 0.25f, 1.0f));
         tree1.pushTransform(new Transform.Translate(0.5f, 0.2f, -0.08f));
-        front.addImage(tree1);
+        front.addTree(tree1);
 
         CardImage trunk1 = new CardImage(4, textures, model);
         trunk1.pushTransform(new Transform.Scale(0.25f, 0.25f, 1.0f));
@@ -165,6 +163,8 @@ public class Card extends Node {
             if(rotateAngle <= 180) {
                 rotateAngle += 2;
                 front.pushTransform(new Transform.Rotate(0.0f, 1.0f, 0.0f, -2));
+
+                // TODO: private boolean openTree = true;
             }
         } else {
             if(rotateAngle >= 0) {
@@ -181,7 +181,7 @@ public class Card extends Node {
 
 
     //****************************************
-    // Private Methods
+    // Public Methods
     //****************************************
 
     /**
@@ -192,6 +192,28 @@ public class Card extends Node {
 
         // Adjust the variables of this card to match that of the copy card
 
+    }
+
+
+    /**
+     * Adds a tree to a side of the card, offset by a certain amount on the cards
+     * @param dx x offset
+     * @param dy y offset
+     * @param scale scale of the tree
+     * @param isFront put on the front or the back
+     */
+    public void addTree(float dx, float dy, float scale, boolean isFront) {
+
+        // Create the new tree
+        CardImage newTree = new CardImage(3, textures, model);
+        newTree.pushTransform(new Transform.Translate(dx, dy, 0.0f));
+        newTree.pushTransform(new Transform.Scale(scale, scale, 1.0f));
+
+        // Add the tree to the intended side
+        if(isFront)
+            front.addTree(newTree);
+        else
+            back.add(newTree);
     }
 
 
@@ -216,8 +238,10 @@ public class Card extends Node {
         private View view;
         private Model model;
 
-        private ArrayList<CardImage> images;
-        private ArrayList<CardText> text;
+        private ArrayList<CardImage>    images;            // All of the images contained on this side
+        private ArrayList<CardImage>    trees;             // All trees
+        private ArrayList<CardImage>    clouds;            // All clouds
+        private ArrayList<CardText>     text;               // All text on this side
 
 
         //****************************************
@@ -231,6 +255,8 @@ public class Card extends Node {
             this.model = model;
 
             images = new ArrayList<>();
+            trees = new ArrayList<>();
+            clouds = new ArrayList<>();
             text = new ArrayList<>();
         }
 
@@ -239,10 +265,15 @@ public class Card extends Node {
         // Public Methods
         //****************************************
 
-        /**
-         * Add an image to the images array and add to this object
-         * @param image
-         */
+        // Add images to this side - specified by type of image
+        public void addTree(CardImage image) {
+            trees.add(image);
+        }
+
+        public void addCloud(CardImage image) {
+            clouds.add(image);
+        }
+
         public void addImage(CardImage image) {
             images.add(image);
         }
@@ -255,6 +286,22 @@ public class Card extends Node {
         //****************************************
         // Node Override Methods
         //****************************************
+        @Override
+        protected void change(GL2 gl) {
+
+            // Adjust the movement of the trees and the clouds
+            // once the clouds reach the right side of the card - remove and spawn a new one
+            for(CardImage tree : trees) {
+                // Rotate the trees up or down based on if the card is open or closed
+
+            }
+
+            // TODO: Need to utilize x and y for clouds
+            for(CardImage cloud : clouds) {
+
+            }
+        }
+
         @Override
         protected void depict(GL2 gl) {
 
@@ -278,6 +325,17 @@ public class Card extends Node {
 
 
             // Draw all the images for this side of the card
+            // Draw all trees
+            for(CardImage tree : trees) {
+                tree.render(gl);
+            }
+
+            // Draw all clouds
+            for(CardImage cloud : clouds) {
+                cloud.render(gl);
+            }
+
+            // Draw all other relevant images
             for(CardImage image : images) {
                 image.render(gl);
             }
@@ -294,7 +352,16 @@ public class Card extends Node {
         // Getters and Setters
         //****************************************
 
+        // Getters
+        public ArrayList<CardImage> getTrees() {
+            return trees;
+        }
 
+
+        // Setters
+        public void setTree(CardImage image, int index) {
+            trees.set(index, image);
+        }
     }
 
 
@@ -307,7 +374,8 @@ public class Card extends Node {
         //****************************************
         // Private Variables
         //****************************************
-        private int index;
+        private int index;          // The index to keep track of the type of image being used
+        public double x, y;        // The coordinates of the image
 
         //****************************************
         // Constructors
@@ -318,6 +386,9 @@ public class Card extends Node {
 
             // Initialize variables
             this.index = index;
+
+            x = 0;
+            y = 0;
         }
 
 
@@ -326,25 +397,7 @@ public class Card extends Node {
         //****************************************
 
         @Override
-        protected void change(GL2 gl) {
-
-            // Check based on the texture how to make the image move
-            switch(index) {
-
-                // The sun - slowly move across the card when open
-                case 6:
-                    pushTransform(new Transform.Translate(0.01f, 0.0f, 0.0f));
-                    break;
-
-                // Clouds - also move slowly across card until hitting middle
-                case 7:
-                    pushTransform(new Transform.Translate(0.02f, 0.0f, 0.0f));
-                    break;
-
-                default:
-                    break;
-            }
-        }
+        protected void change(GL2 gl) { }
 
         @Override
         protected void depict(GL2 gl) {
