@@ -20,6 +20,7 @@ public class Room extends Node {
     //****************************************
     private final Lamp lamp;
     private final Window window;
+    private final Door door;
     private Shelf[] shelves;
 
 
@@ -43,7 +44,9 @@ public class Room extends Node {
         window = new Window(textures);
         super.add(window);
 
-        // TODO: Create a door for the left side of the room
+        // Create a door for the left side of the room
+        door = new Door(textures);
+        super.add(door);
 
         // Create three shelves to display the cards on
         shelves = new Shelf[3];
@@ -138,6 +141,10 @@ public class Room extends Node {
         //****************************************
         public Door(Texture[] textures) {
             super(textures);
+
+            // Scale and move the door
+            pushTransform(new Transform.Scale(0.05f, 0.7f, 0.2f));
+            pushTransform(new Transform.Translate(-0.02f, -0.01f, 0.1f));
         }
 
 
@@ -148,6 +155,8 @@ public class Room extends Node {
         protected void depict(GL2 gl) {
 
             // Draw the door as a cube using a wooden texture
+            Cube.fillFace(gl, 0, getTexture(1));
+            Cube.fillFace(gl, 2, getTexture(11));
         }
     }
 
