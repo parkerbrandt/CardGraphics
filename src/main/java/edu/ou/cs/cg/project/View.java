@@ -15,6 +15,7 @@ import com.jogamp.opengl.util.texture.TextureIO;
 import edu.ou.cs.cg.project.scene.Card;
 import edu.ou.cs.cg.project.scene.Room;
 import edu.ou.cs.cg.utilities.Node;
+import edu.ou.cs.cg.utilities.Transform;
 
 import java.awt.*;
 import java.io.File;
@@ -37,16 +38,24 @@ public class View implements GLEventListener {
     // Private Class Members
     //****************************************
     private static final int DEFAULT_FRAMES_PER_SECOND = 60;
-    private static final String RSRC = "/images/";               // Resource folder location
+    private static final String CRSRC = "/cards/";                  // Card Resource folder location
+    private static final String RSRC = "/images/";                  // Image Resource folder location
     private static final String[] FILENAMES =
             {
-                    "wall.jpg",           // Image used to texture the walls
-                    "floor.jpg",          // Image used to texture the floor and shelves of the room
-                    "paper.jpg",          // Texture of the actual cards
-                    //"window.jpg",       // Transparent window put over the city image
-                    //"city.jpg",         // The city image used to show the "outside" world
-                    //"ceiling.jpg",      // Image used to texture the ceiling
+                    "wall.png",             // Image used to texture the walls
+                    "floor.png",            // Image used to texture the floor and shelves of the room
+                    "paper.png",            // Texture of the actual cards
+                    "tree.png",             // The tree to use
+                    "trunk.png",            // The trunk of the tree to show
+                    "apple.png",            // The apples that will fall from the tree
+                    "sun.png",              // The image used for the sun
+                    "cloud.png",            // The image used for clouds
+                    "window.png",           // Transparent window put over the city image
+                    "city.png",             // The city image used to show the "outside" world
+                    "bg.png",               // The background image that can be used in the card
             };
+
+
 
 
     //****************************************
@@ -227,7 +236,7 @@ public class View implements GLEventListener {
 
                 if(url != null) {
                     // Create the texture from a JPG file
-                    textures[i] = TextureIO.newTexture(url, false, TextureIO.JPG);
+                    textures[i] = TextureIO.newTexture(url, false, TextureIO.PNG);
 
                     textures[i].setTexParameteri(gl, GL2.GL_TEXTURE_MIN_FILTER,
                             GL2.GL_LINEAR);
@@ -276,15 +285,31 @@ public class View implements GLEventListener {
     }
 
     private void drawMode(GLAutoDrawable drawable) {
+
         renderer.beginRendering(width, height);
 
         // Draw text in white
         renderer.setColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         // Draw instructions on the left side if
-        String instruct = "Instructions";
+        String[] instruct = {   "Instructions: ",
+                                "E to toggle edit mode",
+                                "C to change color",
+                                "D to reset the card",
+                                "T to edit the text",
+                                "S to save the card",
+                                "Space to open the card",
+                                "Num Keys to Change Card",
+                                };
+
         if(model.showInstructions()) {
-            renderer.draw(instruct, 2, height - 12);
+            for(int i = 0; i < instruct.length; i++) {
+                renderer.draw(instruct[i], 2, height - 12 * (i + 1));
+            }
+        }
+
+        if(model.isEditMode()) {
+            renderer.draw("EDITING", 2, height - 708);
         }
 
         renderer.endRendering();
@@ -303,17 +328,20 @@ public class View implements GLEventListener {
         root.add(stage);
 
         // Create the default card
-        Card main = new Card(this, model);
+        Card main = new Card(textures, this, model);
+        main.pushTransform(new Transform.Translate(0.0f, 1.0f, 1.0f));          // Move the default card in front of the user
         root.add(main);
 
         // TODO: Iterate through each file in images/cards and show on a shelf
+        /*
         ArrayList<Card> displayCards = new ArrayList<>();
 
-        File dir = new File("/images/cards/");
+        File dir = new File(CRSRC);
         File[] directoryListing = dir.listFiles();
         if(directoryListing != null) {
+            int count = 0;
             for(File card : directoryListing) {
-                displayCards.add(new Card(card.toString(), this, model));
+                displayCards.add(new Card(card.toString(), textures,this, model));
             }
         }
 
@@ -322,6 +350,7 @@ public class View implements GLEventListener {
                 displayCards.remove(9);
             }
         }
+        */
 
 
     }
@@ -341,5 +370,9 @@ public class View implements GLEventListener {
 
     public int getHeight() {
         return height;
+    }
+
+    public TextRenderer getRenderer() {
+        return renderer;
     }
 }
