@@ -43,6 +43,8 @@ public class Room extends Node {
         window = new Window(textures);
         super.add(window);
 
+        // TODO: Create a door for the left side of the room
+
         // Create three shelves to display the cards on
         shelves = new Shelf[3];
         shelves[0] = new Shelf(textures);
@@ -103,8 +105,8 @@ public class Room extends Node {
         public Window(Texture[] textures) {
             super(textures);
 
-            pushTransform(new Transform.Translate(19.7f, 0.5f, -0.1f));
-            pushTransform(new Transform.Scale(0.05f, 0.5f, 0.5f));
+            pushTransform(new Transform.Scale(0.01f, 0.5f, 0.4f));
+            pushTransform(new Transform.Translate(0.95f, 0.25f, 0.1f));
         }
 
 
@@ -117,11 +119,35 @@ public class Room extends Node {
         @Override
         protected void depict(GL2 gl) {
 
-            // Use an altered cube to depict the window
-            Cube.fill(gl);
+            // Use the city texture with a curtain over it
+            Cube.fillFace(gl, 2, getTexture(9));
 
-            // TODO: Fill each face of cube with a texture
+            Cube.fillFace(gl, 3, getTexture(10));
+        }
+    }
 
+
+    /**
+     * An inner class used to represent a door in the room
+     * A modified cube
+     */
+    public static class Door extends Node {
+
+        //****************************************
+        // Constructors
+        //****************************************
+        public Door(Texture[] textures) {
+            super(textures);
+        }
+
+
+        //****************************************
+        // Node Override Methods
+        //****************************************
+        @Override
+        protected void depict(GL2 gl) {
+
+            // Draw the door as a cube using a wooden texture
         }
     }
 
