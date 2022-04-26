@@ -7,11 +7,9 @@ import edu.ou.cs.cg.project.Model;
 import edu.ou.cs.cg.project.View;
 import edu.ou.cs.cg.utilities.Cube;
 import edu.ou.cs.cg.utilities.Node;
-import edu.ou.cs.cg.utilities.Point3D;
 import edu.ou.cs.cg.utilities.Transform;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
@@ -87,12 +85,29 @@ public class Card extends Node {
         back.pushTransform(new Transform.Translate(0.5f, 0.0f, -0.02f));
         this.add(back);
 
-        // Add some default text
-        text = new ArrayList<>();
-        text.add("The Default Card");
 
-        // Add two trees to the inside
-        trees = new ArrayList<>();
+        // TODO: Check if there is a background image and if so, paste it on each side
+
+        // Add a sun at the top
+        CardImage sun = new CardImage(6, textures);
+        sun.pushTransform(new Transform.Scale(0.25f, 0.25f, 1.0f));
+        sun.pushTransform(new Transform.Translate(0.5f, 0.5f, -0.08f));
+        //front.addImage(sun);
+
+        // Add two default trees with trunks to the inside of the card front
+        CardImage tree1 = new CardImage(3, textures);
+        tree1.pushTransform(new Transform.Scale(0.25f, 0.25f, 1.0f));
+        tree1.pushTransform(new Transform.Translate(0.5f, 0.2f, -0.08f));
+        front.addImage(tree1);
+
+        CardImage trunk1 = new CardImage(4, textures);
+        trunk1.pushTransform(new Transform.Scale(0.25f, 0.25f, 1.0f));
+        trunk1.pushTransform(new Transform.Translate(0.5f, 0.0f, -0.08f));
+        front.addImage(trunk1);
+
+
+        // Add some default text
+
 
         // Start the day/night cycle
         time = 0;
@@ -132,8 +147,6 @@ public class Card extends Node {
 
     @Override
     protected void depict(GL2 gl) {
-
-        // TODO: Get card translation from model
 
         // Rotate the front face of the card
         if(model.isCardOpen()) {
@@ -192,6 +205,7 @@ public class Card extends Node {
         private Model model;
 
         private ArrayList<CardImage> images;
+        private ArrayList<CardText> text;
 
 
         //****************************************
@@ -205,6 +219,7 @@ public class Card extends Node {
             this.model = model;
 
             images = new ArrayList<>();
+            text = new ArrayList<>();
         }
 
 
@@ -220,6 +235,12 @@ public class Card extends Node {
             images.add(image);
 
             this.add(image);
+        }
+
+        public void addText(CardText string) {
+            text.add(string);
+
+            this.add(string);
         }
 
 
@@ -251,7 +272,20 @@ public class Card extends Node {
             for(CardImage image : images) {
                 image.render(gl);
             }
+
+            // Draw all the text for this side of the card
+            for(CardText line : text) {
+                line.render(gl);
+            }
+
         }
+
+
+        //****************************************
+        // Getters and Setters
+        //****************************************
+
+
     }
 
 
@@ -282,10 +316,50 @@ public class Card extends Node {
         //****************************************
 
         @Override
+        protected void change(GL2 gl) {
+            
+        }
+
+        @Override
         protected void depict(GL2 gl) {
 
             // Draw the image on a Cube
             Cube.fillFace(gl, 0, getTexture(index));
+            Cube.fillFace(gl, 1, getTexture(index));
+        }
+    }
+
+
+    /**
+     * Inner class to represent the text used on the inside and outside of the cards
+     */
+    public static class CardText extends Node {
+
+        //****************************************
+        // Private Variables
+        //****************************************
+        private TextRenderer renderer;
+        private String text;
+
+
+        //****************************************
+        // Constructors
+        //****************************************
+
+        public CardText(TextRenderer renderer, String text) {
+            // Initialize variables
+            this.renderer = renderer;
+            this.text = text;
+        }
+
+
+        //****************************************
+        // Node Override Methods
+        //****************************************
+
+        @Override
+        protected void depict(GL2 gl) {
+            renderer.draw3D(text, 0.0f, 0.0f, 0.0f, 1.0f);
         }
     }
 }
