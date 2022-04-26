@@ -186,6 +186,8 @@ public class View implements GLEventListener {
         gl.glShadeModel(GL2.GL_SMOOTH);     // Smooth (Gouraud) shading
 
         gl.glEnable(GL2.GL_COLOR_MATERIAL); // Allow coloring
+        gl.glEnable(GL2.GL_BLEND);
+        gl.glBlendFunc(GL.GL_ONE, GL.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     /**
@@ -207,7 +209,6 @@ public class View implements GLEventListener {
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
         glu.gluPerspective(45.0f, aspect, 0.1f, 50.0f);
-
 
         // Initialize the actual camera with a position and where to look at
         gl.glMatrixMode(GL2.GL_MODELVIEW);
