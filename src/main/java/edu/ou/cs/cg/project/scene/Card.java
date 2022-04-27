@@ -10,6 +10,7 @@ import edu.ou.cs.cg.utilities.Node;
 import edu.ou.cs.cg.utilities.Transform;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
@@ -106,22 +107,12 @@ public class Card extends Node {
         }
 
         // Add some default text to the front
-        String[] frontText = new String[] { "Hello,", "Good Morning"};
+        String[] frontText = model.getFrontText();
         CardText gm = new CardText(renderer, frontText);
         gm.pushTransform(new Transform.Translate(0.2f, 0.3f, 1.2f));
         gm.pushTransform(new Transform.Scale(0.8f, 0.8f, 1.0f));
-        front.addText(gm);
+        front.setText(gm);
 
-        // Add some default text to the back inside part
-        String[] inside = new String[] { "Graphics", "Final Project"};
-        CardText in = new CardText(renderer, inside);
-        in.pushTransform(new Transform.Rotate(0.0f, 1.0f, 0.0f, 180));
-        in.pushTransform(new Transform.Translate(-0.5f, 0.0f, 0.0f));
-        back.addText(in);
-
-
-        // Start the day/night cycle
-        time = 0;
     }
 
     /**
@@ -154,7 +145,11 @@ public class Card extends Node {
     //****************************************
 
     @Override
-    protected void change(GL2 gl) { }
+    protected void change(GL2 gl) {
+
+        // Check if the text on the front side needs to be updated
+        front.changeText(model.getFrontText());
+    }
 
     @Override
     protected void depict(GL2 gl) {
@@ -165,8 +160,6 @@ public class Card extends Node {
             if(rotateAngle <= 180) {
                 rotateAngle += 2;
                 front.pushTransform(new Transform.Rotate(0.0f, 1.0f, 0.0f, -2));
-
-                // TODO: private boolean openTree = true;
             }
         } else {
             if(rotateAngle >= 0) {
@@ -223,10 +216,10 @@ public class Card extends Node {
 
         // Add the tree to the intended side
         if(isFront) {
-            front.addTree(newTree);
+            front.addTree(newTree, dx, dy);
             front.add(trunk);
         } else {
-            back.addTree(newTree);
+            back.addTree(newTree, dx, dy);
             back.add(trunk);
         }
     }
@@ -247,9 +240,9 @@ public class Card extends Node {
 
         // Add the cloud to the intended side
         if(isFront)
-            front.addCloud(newCloud);
+            front.addCloud(newCloud, dx, dy);
         else
-            back.addCloud(newCloud);
+            back.addCloud(newCloud, dx, dy);
     }
 
 
@@ -282,12 +275,17 @@ public class Card extends Node {
         private View view;
         private Model model;
 
-        private Color color;
+        private Color color;        // The color of the outside of the card
+        private Color inColor;      // The color of the inside of the card
 
-        private ArrayList<CardImage>    images;            // All of the images contained on this side
-        private ArrayList<CardImage>    trees;             // All trees
-        private ArrayList<CardImage>    clouds;            // All clouds
-        private ArrayList<CardText>     text;               // All text on this side
+        private ArrayList<CardImage>        images;             // All of the images contained on this side
+        private ArrayList<CardImage>        trees;              // All trees
+        private ArrayList<Point2D.Float>    treeLoc;            // All tree locations
+
+        private ArrayList<CardImage>        clouds;             // All clouds
+        private ArrayList<Point2D.Float>    cloudLoc;           // All cloud locations
+
+        private CardText   text;               // All text on this side
 
         private float treeRotate;       // The angle of rotation of the trees
 
@@ -303,13 +301,17 @@ public class Card extends Node {
             this.model = model;
 
             color = model.getCardColor();
+            inColor = new Color(255, 255, 255);
 
             images = new ArrayList<>();
             trees = new ArrayList<>();
+            treeLoc = new ArrayList<>();
             clouds = new ArrayList<>();
-            text = new ArrayList<>();
+            cloudLoc = new ArrayList<>();
 
             treeRotate = 180;
+
+            text = new CardText(view.getRenderer(), new String[] {""});
         }
 
 
@@ -318,20 +320,22 @@ public class Card extends Node {
         //****************************************
 
         // Add images to this side - specified by type of image
-        public void addTree(CardImage image) {
+        public void addTree(CardImage image, float dx, float dy) {
             trees.add(image);
+            treeLoc.add(new Point2D.Float(dx, dy));
         }
 
-        public void addCloud(CardImage image) {
+        public void addCloud(CardImage image, float dx, float dy) {
             clouds.add(image);
+            cloudLoc.add(new Point2D.Float(dx, dy));
         }
 
         public void addImage(CardImage image) {
             images.add(image);
         }
 
-        public void addText(CardText string) {
-            text.add(string);
+        public void changeText(String[] string) {
+            text.changeText(string);
         }
 
 
@@ -340,6 +344,14 @@ public class Card extends Node {
         //****************************************
         @Override
         protected void change(GL2 gl) {
+
+            // Adjust the shading on the inside of the card for a day/night cycle when the card is open
+            if(model.isCardOpen()) {
+                int col = inColor.getRed() - 1;
+                if (col < 25)
+                    col = 255;
+                inColor = new Color(col, col, col);
+            }
 
             // Adjust the movement of the trees and the clouds
             // once the clouds reach the right side of the card - remove and spawn a new one
@@ -359,13 +371,18 @@ public class Card extends Node {
             }
 
             // TODO: Need to utilize x and y for clouds
-            for(CardImage cloud : clouds) {
-
+            for(int i = 0; i < clouds.size(); i++) {
+                // Check if cloud needs to be reset
+                if(cloudLoc.get(i).x > 1.0) {
+                    cloudLoc.set(i, new Point2D.Float());
+                }
             }
         }
 
         @Override
         protected void depict(GL2 gl) {
+
+            // TODO: Check if card has been reset
 
             // Depict as transformed cube with paper texture
 
@@ -374,7 +391,7 @@ public class Card extends Node {
             Cube.fillFace(gl, 0, getTexture(2));
 
             // Color the inside of the card white
-            gl.glColor3f(1.0f, 1.0f, 1.0f);
+            gl.glColor3f((float)inColor.getRed()/255.0f, (float)inColor.getGreen()/255.0f, (float)inColor.getBlue()/255.0f);
 
             Cube.fillFace(gl, 1, getTexture(2));
             Cube.fillFace(gl, 2, getTexture(2));
@@ -385,8 +402,23 @@ public class Card extends Node {
 
             // Draw all the images for this side of the card
             // Draw all trees
-            for(CardImage tree : trees) {
-                tree.render(gl);
+            // TODO: If in edit mode, get selected tree and draw a golden square around
+            for(int i = 0; i < trees.size(); i++) {
+                // Check the selected tree bounds
+                if(model.getSelectedTree() >= trees.size())
+                    model.setSelectedTree(0);
+
+                // Check if we should draw a box around the tree
+                if(model.isEditMode() && i == model.getSelectedTree()) {
+
+                    gl.glColor3f(1.0f, 215.0f/255.0f, 0.0f);
+
+                    gl.glBegin(GL2.GL_QUADS);
+
+                    gl.glEnd();
+                }
+
+                trees.get(i).render(gl);
             }
 
             // Draw all clouds
@@ -400,9 +432,7 @@ public class Card extends Node {
             }
 
             // Draw all the text for this side of the card
-            for(CardText line : text) {
-                line.render(gl);
-            }
+            text.render(gl);
 
         }
 
@@ -424,6 +454,10 @@ public class Card extends Node {
 
         public void setTree(CardImage image, int index) {
             trees.set(index, image);
+        }
+
+        public void setText(CardText newText) {
+            text = newText;
         }
     }
 
