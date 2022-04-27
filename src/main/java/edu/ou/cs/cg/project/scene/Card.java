@@ -32,7 +32,7 @@ public class Card extends Node {
 
     private int     id;                 // The unique ID of the card
 
-    private int     cardIndex;          // The index of the card - used to determine if this is the "main" card
+    protected int   cardIndex;          // The index of the card - used to determine if this is the "main" card
 
     private CardSide front;
     private CardSide back;
@@ -62,8 +62,7 @@ public class Card extends Node {
         this.model = model;
         this.renderer = view.getRenderer();
 
-        Random rand = new Random();
-        this.id = rand.nextInt(1000);
+        this.id = 0;
 
         cardIndex = 0;
 
@@ -173,6 +172,9 @@ public class Card extends Node {
             }
         }
 
+        // Check if the color needs to be changed if this is the "main" card
+        if(id == 0)
+            setColor(model.getCardColor());
 
         // Render each side of the card
         front.render(gl);
@@ -227,6 +229,14 @@ public class Card extends Node {
     }
 
 
+    // Setters
+    public void setColor(Color color) {
+        // Set the color of the front and back of the card
+        front.setColor(color);
+        back.setColor(color);
+    }
+
+
     /**
      * Inner Class to represent each side of a card
      */
@@ -237,6 +247,8 @@ public class Card extends Node {
         //****************************************
         private View view;
         private Model model;
+
+        private Color color;
 
         private ArrayList<CardImage>    images;            // All of the images contained on this side
         private ArrayList<CardImage>    trees;             // All trees
@@ -253,6 +265,8 @@ public class Card extends Node {
             // Initialize variables
             this.view = view;
             this.model = model;
+
+            color = model.getCardColor();
 
             images = new ArrayList<>();
             trees = new ArrayList<>();
@@ -293,7 +307,9 @@ public class Card extends Node {
             // once the clouds reach the right side of the card - remove and spawn a new one
             for(CardImage tree : trees) {
                 // Rotate the trees up or down based on if the card is open or closed
+                if(model.isCardOpen()) {
 
+                }
             }
 
             // TODO: Need to utilize x and y for clouds
@@ -307,10 +323,7 @@ public class Card extends Node {
 
             // Depict as transformed cube with paper texture
 
-            // TODO: Make getCardColor() have an index parameter to choose which card
-            // Get the color of the outside of the card
-            Color out = model.getCardColor();
-            gl.glColor3f((float)out.getRed()/255.0f, (float)out.getGreen()/255.0f, (float)out.getBlue()/255.0f);
+            gl.glColor3f((float)color.getRed()/255.0f, (float)color.getGreen()/255.0f, (float)color.getBlue()/255.0f);
 
             Cube.fillFace(gl, 0, getTexture(2));
 
@@ -359,6 +372,10 @@ public class Card extends Node {
 
 
         // Setters
+        public void setColor(Color color) {
+            this.color = color;
+        }
+
         public void setTree(CardImage image, int index) {
             trees.set(index, image);
         }
