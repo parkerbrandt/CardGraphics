@@ -88,12 +88,22 @@ public class Card extends Node {
         // Add a sun at the top
         CardImage sun = new CardImage(6, textures, model);
         sun.pushTransform(new Transform.Scale(0.25f, 0.25f, 1.0f));
-        sun.pushTransform(new Transform.Translate(0.5f, 0.5f, -0.08f));
+        sun.pushTransform(new Transform.Translate(0.7f, 0.7f, -0.08f));
         front.addImage(sun);
 
-        // TODO: Use
-        // Add two default trees with trunks to the inside of the card front
+        // Add three default trees to the inside of the card
         addTree(0.5f, 0.2f, 0.25f, true);
+        addTree(0.1f, 0.35f, 0.25f, true);
+        addTree(0.5f, 0.3f, 0.25f, false);
+
+        // Add a few "random" clouds
+        Random rand = new Random();
+        for(int i = 0; i < rand.nextInt(5) + 1; i++) {
+            float x = (float)rand.nextInt(50) / 100.0f;
+            float y = (float)rand.nextInt(20) / 100.0f + 0.4f;
+
+            addCloud(x, y, 0.25f, rand.nextBoolean());
+        }
 
         // Add some default text to the front
         String[] frontText = new String[] { "Hello,", "Good Morning"};
@@ -105,7 +115,9 @@ public class Card extends Node {
         // Add some default text to the back inside part
         String[] inside = new String[] { "Graphics", "Final Project"};
         CardText in = new CardText(renderer, inside);
-        // back.addTe
+        in.pushTransform(new Transform.Rotate(0.0f, 1.0f, 0.0f, 180));
+        in.pushTransform(new Transform.Translate(-0.5f, 0.0f, 0.0f));
+        back.addText(in);
 
 
         // Start the day/night cycle
@@ -190,6 +202,8 @@ public class Card extends Node {
 
     /**
      * Adds a tree to a side of the card, offset by a certain amount on the cards
+     * TODO: Store tree location information
+     *
      * @param dx x offset
      * @param dy y offset
      * @param scale scale of the tree
@@ -215,6 +229,27 @@ public class Card extends Node {
             back.addTree(newTree);
             back.add(trunk);
         }
+    }
+
+    /**
+     * Adds a cloud to a side of the card
+     * @param dx
+     * @param dy
+     * @param scale
+     * @param isFront
+     */
+    public void addCloud(float dx, float dy, float scale, boolean isFront) {
+
+        // Create the cloud
+        CardImage newCloud = new CardImage(7, textures, model);
+        newCloud.pushTransform(new Transform.Scale(scale, scale, 1.0f));
+        newCloud.pushTransform(new Transform.Translate(dx, dy, -0.08f));
+
+        // Add the cloud to the intended side
+        if(isFront)
+            front.addCloud(newCloud);
+        else
+            back.addCloud(newCloud);
     }
 
 
@@ -254,6 +289,8 @@ public class Card extends Node {
         private ArrayList<CardImage>    clouds;            // All clouds
         private ArrayList<CardText>     text;               // All text on this side
 
+        private float treeRotate;       // The angle of rotation of the trees
+
 
         //****************************************
         // Constructors
@@ -271,6 +308,8 @@ public class Card extends Node {
             trees = new ArrayList<>();
             clouds = new ArrayList<>();
             text = new ArrayList<>();
+
+            treeRotate = 180;
         }
 
 
@@ -307,7 +346,15 @@ public class Card extends Node {
             for(CardImage tree : trees) {
                 // Rotate the trees up or down based on if the card is open or closed
                 if(model.isCardOpen()) {
-
+                    if(treeRotate >= 0) {
+                        //tree.pushTransform(new Transform.Rotate(1.0f, 0.0f, 0.0f, -2f));
+                        //treeRotate -= 2;
+                    }
+                } else {
+                    if(treeRotate <= 180) {
+                        //tree.pushTransform(new Transform.Rotate(1.0f, 0.0f, 0.0f, 2f));
+                        //treeRotate += 2;
+                    }
                 }
             }
 
