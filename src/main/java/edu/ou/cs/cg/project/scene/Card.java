@@ -91,18 +91,9 @@ public class Card extends Node {
         sun.pushTransform(new Transform.Translate(0.5f, 0.5f, -0.08f));
         front.addImage(sun);
 
-        // TODO: Make list of trees to rotate in depict
+        // TODO: Use
         // Add two default trees with trunks to the inside of the card front
-        CardImage tree1 = new CardImage(3, textures, model);
-        tree1.pushTransform(new Transform.Scale(0.25f, 0.25f, 1.0f));
-        tree1.pushTransform(new Transform.Translate(0.5f, 0.2f, -0.08f));
-        front.addTree(tree1);
-
-        CardImage trunk1 = new CardImage(4, textures, model);
-        trunk1.pushTransform(new Transform.Scale(0.25f, 0.25f, 1.0f));
-        trunk1.pushTransform(new Transform.Translate(0.5f, 0.0f, -0.08f));
-        front.addImage(trunk1);
-
+        addTree(0.5f, 0.2f, 0.25f, true);
 
         // Add some default text to the front
         String[] frontText = new String[] { "Hello,", "Good Morning"};
@@ -208,14 +199,22 @@ public class Card extends Node {
 
         // Create the new tree
         CardImage newTree = new CardImage(3, textures, model);
-        newTree.pushTransform(new Transform.Translate(dx, dy, 0.0f));
         newTree.pushTransform(new Transform.Scale(scale, scale, 1.0f));
+        newTree.pushTransform(new Transform.Translate(dx, dy, -0.08f));
+
+        // Add the trunk underneath
+        CardImage trunk = new CardImage(4, textures, model);
+        trunk.pushTransform(new Transform.Scale(scale, scale, 1.0f));
+        trunk.pushTransform(new Transform.Translate(dx, dy - 0.2f, -0.08f));
 
         // Add the tree to the intended side
-        if(isFront)
+        if(isFront) {
             front.addTree(newTree);
-        else
-            back.add(newTree);
+            front.add(trunk);
+        } else {
+            back.addTree(newTree);
+            back.add(trunk);
+        }
     }
 
 
