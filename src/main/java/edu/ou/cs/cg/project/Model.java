@@ -11,6 +11,7 @@ import edu.ou.cs.cg.utilities.Utilities;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -83,6 +84,7 @@ public class Model {
 
         // Load first 9 display cards from the cards resource folder
         displayCards = new ArrayList<>();
+        loadDisplayCards();
 
         selectedTree = 0;
         isFrontTree = true;
@@ -114,23 +116,82 @@ public class Model {
 
     /**
      * Read the card data from the specified filename
-     * CSV Format: ID,Color,TreeLocations
+     * CSV Format: ID,Color,FrontText,InnerText,TreeLocations
      * @param filename
      * @throws IOException
      */
-    public Card load(String filename, Texture[] textures) throws IOException {
+    public Card load(String filename, Texture[] textures, int index) throws IOException {
+
+        // Card Variables
+        Card add;
+        int id;
+        int colorIdx = 0;
+        String frontText = "", inText = "";
+        ArrayList<Point2D.Float> trees = new ArrayList<>();
+        ArrayList<Boolean> treeSide = new ArrayList<>();
 
         BufferedReader reader = new BufferedReader(new FileReader(filename));
         String line = "";
         while((line = reader.readLine()) != null) {
+            String[] data = line.split(",");
+
+            id = Integer.parseInt(data[0]);
+            colorIdx = Integer.parseInt(data[1]);
+            frontText = data[2];
+            inText = data[3];
+
+            // Read in the available tree data
+            if(data.length > 4) {
+                for(int i = 4; i < data.length; i += 3) {
+                    // Check if this belongs on the front or back of the card
+                    treeSide.add(data[i].equals("front"));
+
+                    // Get the dimensions
+                    float dx = Float.parseFloat(data[i+1]);
+                    float dy = Float.parseFloat(data[i+2]);
+                    trees.add(new Point2D.Float(dx, dy));
+                }
+            }
 
         }
 
-        return new Card(textures, view, this);
+        // Create the card
+        add = new Card(textures, view, this, index);
+        add.setColor(cardColors[colorIdx]);
+        add.addText(frontText, true);
+        add.addText(inText, false);
+
+        // Add trees to the card
+        for(int i = 0; i < trees.size(); i++) {
+            add.addTree(trees.get(i).x, trees.get(i).y, 0.25f, treeSide.get(i));
+        }
+
+        return add;
     }
 
 
     // Card Modification Methods
+
+    /**
+     * Loads the cards from the /cards/ directory and displays the first 9 on the shelves
+     */
+    private void loadDisplayCards() {
+
+        for(int i = 0; i < 9; i++) {
+            // Get the URL of the file
+            URL url = Model.class.getResource("/cards/card0" + i + ".csv");
+
+            // If not null, load the file
+            if(url != null) {
+                System.out.println(url.getPath());
+                try {
+                    displayCards.add(load(url.getPath(), textures, i));
+                } catch(IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
     /**
      * Switch the currently selected color of the current card
@@ -169,6 +230,7 @@ public class Model {
 
     /**
      * Adds a tree to the main card
+     * TODO: Spawn random tree
      */
     public void addTree() {
         // main.addTree()
@@ -181,12 +243,22 @@ public class Model {
         // main.removeTree()
     }
 
+    /**
+     * Move the selected tree up
+     * TODO: Check bounds
+     * @param amt
+     */
     public void moveTreeUp(float amt) {
-
+        treeLoc.set(selectedTree, new Point2D.Float(treeLoc.get(selectedTree).x, treeLoc.get(selectedTree).y + amt));
     }
 
+    /**
+     * Move the selected tree to the right
+     * TODO: Check bounds
+     * @param amt
+     */
     public void moveTreeRight(float amt) {
-
+        treeLoc.set(selectedTree, new Point2D.Float(treeLoc.get(selectedTree).x + amt, treeLoc.get(selectedTree).y));
     }
 
     /**

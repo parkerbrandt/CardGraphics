@@ -52,6 +52,9 @@ public class View implements GLEventListener {
                     "cloud.png",            // The image used for clouds
                     "window.png",           // Transparent window put over the city image
                     "city.png",             // The city image used to show the "outside" world
+                    "curtains.png",         // The transparent curtains image used over the window
+                    "door.png",             // The texture for a door
+                    "front.png",            // The image that can be put on the front side of the card, use 'F' to toggle
                     "bg.png",               // The background image that can be used in the card
             };
 
@@ -84,6 +87,9 @@ public class View implements GLEventListener {
 
     private Texture[]           textures;       // Textures loaded from FILENAMES
     private Node                root;           // Root node of scene graph
+
+    private Room                stage;          // The cubic room scene takes place in
+    private Card                main;           // The main/default card the user is holding
 
 
 
@@ -159,9 +165,7 @@ public class View implements GLEventListener {
     }
 
     @Override
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-        // TODO: Don't allow resizing
-    }
+    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) { }
 
 
     //****************************************
@@ -292,7 +296,8 @@ public class View implements GLEventListener {
         // Draw text in white
         renderer.setColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-        // Draw instructions on the left side if
+        // Draw instructions on the left side if escape key is clicked
+        // TODO:
         String[] instruct = {   "Instructions: ",
                                 "E to toggle edit mode",
                                 "C to change color",
@@ -309,6 +314,7 @@ public class View implements GLEventListener {
             }
         }
 
+        // Draw in the bottom right to let the user know they are editing
         if(model.isEditMode()) {
             renderer.draw("EDITING", 2, height - 708);
         }
@@ -324,36 +330,27 @@ public class View implements GLEventListener {
     // Scene Methods
     public void initScene(GLAutoDrawable drawable) {
 
-        // TODO: Create cubic stage
-        Room stage = new Room(textures);
+        // Create a cubic room with various amenities
+        stage = new Room(textures);
         root.add(stage);
 
         // Create the default card
-        Card main = new Card(textures, this, model);
+        main = new Card(textures, this, model);
         main.pushTransform(new Transform.Translate(0.0f, 1.0f, 1.0f));          // Move the default card in front of the user
         root.add(main);
 
-        // TODO: Iterate through each file in images/cards and show on a shelf
-        /*
-        ArrayList<Card> displayCards = new ArrayList<>();
-
-        File dir = new File(CRSRC);
-        File[] directoryListing = dir.listFiles();
-        if(directoryListing != null) {
-            int count = 0;
-            for(File card : directoryListing) {
-                displayCards.add(new Card(card.toString(), textures,this, model));
+        // Display the first 9 display cards from model
+        ArrayList<Card> displayCards = model.getDisplayCards();
+        int limit = Math.min(displayCards.size(), 9);
+        if(displayCards.size() > 0) {
+            System.out.println("AHAHAHAH");
+            for (int i = 0; i < limit; i++) {
+                // TODO: Add the transformations to put them on the shelves
+                displayCards.get(i).pushTransform(new Transform.Scale(0.25f, 0.25f, 0.25f));
+                displayCards.get(i).pushTransform(new Transform.Translate(-1.1f, 0.1f, 0.0f));
+                root.add(displayCards.get(i));
             }
         }
-
-        if(displayCards.size() > 9) {
-            for(int i = displayCards.size() - 1; i > 9; i--) {
-                displayCards.remove(9);
-            }
-        }
-        */
-
-
     }
 
 
@@ -375,5 +372,17 @@ public class View implements GLEventListener {
 
     public TextRenderer getRenderer() {
         return renderer;
+    }
+
+    public Texture[] getTextures() {
+        return textures;
+    }
+
+    public int getCounter() {
+        return counter;
+    }
+
+    public Card getMainCard() {
+        return main;
     }
 }

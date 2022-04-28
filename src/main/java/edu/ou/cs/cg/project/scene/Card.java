@@ -118,10 +118,11 @@ public class Card extends Node {
     }
 
     /**
-     * Loads a card from a CSV file and initializes data
-     * @param filename the file location/name
+     * Creates a new card based off of data input in a CSV file in the /cards/ directory
+     * Trees and text will be added manually by model class
+     * Need to add clouds and sun
      */
-    public Card(String filename, Texture[] textures, View view, Model model, int index) {
+    public Card(Texture[] textures, View view, Model model, int index) {
         super(textures);
 
         // Initialize variables
@@ -131,14 +132,51 @@ public class Card extends Node {
 
         cardIndex = index;
 
-        time = 0;
+        // Create the front and back of the card
+        // The "front" of the card
+        front = new CardSide(textures, view, model);
+        front.pushTransform(new Transform.Scale(0.5f, 0.8f, 0.01f));
+        front.setFront(true);
+        this.add(front);
 
-        // Load the data from a file
-        try {
-            model.load(filename, textures);
-        } catch(IOException e) {
-            e.printStackTrace();
+        // The "back" of the card - should always be slightly "behind" the front
+        // Flip the back and push back
+        back = new CardSide(textures, view, model);
+        back.pushTransform(new Transform.Scale(0.5f, 0.8f, 0.01f));
+        back.pushTransform(new Transform.Rotate(0.0f, 1.0f, 0.0f, 180));
+        back.pushTransform(new Transform.Translate(0.5f, 0.0f, -0.02f));
+        this.add(back);
+
+        // Add a sun at the top
+        CardImage sun = new CardImage(6, textures, model);
+        sun.pushTransform(new Transform.Scale(0.25f, 0.25f, 1.0f));
+        sun.pushTransform(new Transform.Translate(0.7f, 0.7f, -0.08f));
+        front.addImage(sun);
+
+        // Add a few "random" clouds
+        Random rand = new Random();
+        for(int i = 0; i < rand.nextInt(5) + 1; i++) {
+            float x = (float)rand.nextInt(50) / 100.0f;
+            float y = (float)rand.nextInt(20) / 100.0f + 0.4f;
+
+            addCloud(x, y, 0.25f, rand.nextBoolean());
         }
+
+        // Add the default text to keep the correct transformations
+        // Add some text to the front
+        String[] frontText = model.getFrontText();
+        CardText frt = new CardText(renderer, frontText);
+        frt.pushTransform(new Transform.Translate(0.2f, 0.3f, 1.2f));
+        frt.pushTransform(new Transform.Scale(0.8f, 0.8f, 1.0f));
+        front.setText(frt);
+
+        // Add some text to the inside on the right
+        String[] insideText = model.getInsideText();
+        CardText in = new CardText(renderer, insideText);
+        in.pushTransform(new Transform.Scale(0.5f, 0.5f, 1.0f));
+        in.pushTransform(new Transform.Rotate(0.0f, 1.0f, 0.0f, 180));
+        in.pushTransform(new Transform.Translate(0.7f, 0.4f, -1.5f));
+        back.setText(in);
     }
 
 
@@ -172,7 +210,7 @@ public class Card extends Node {
         }
 
         // Check if the color needs to be changed if this is the "main" card
-        if(id == 0)
+        if(cardIndex == 0)
             setColor(model.getCardColor());
 
         // Render each side of the card
@@ -249,6 +287,20 @@ public class Card extends Node {
             front.addCloud(newCloud, dx, dy);
         else
             back.addCloud(newCloud, dx, dy);
+    }
+
+    /**
+     * Adds some text to either the front or inside of the card
+     * @param text
+     * @param isFront
+     */
+    public void addText(String text, boolean isFront) {
+
+        if(isFront) {
+            front.changeText(new String[] {text});
+        } else {
+            back.changeText(new String[] {text});
+        }
     }
 
 
