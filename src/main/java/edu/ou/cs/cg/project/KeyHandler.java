@@ -120,11 +120,13 @@ public class KeyHandler extends KeyAdapter {
 
             // Delete the current card and set to be default
             // If in edit mode, move the tree to the right
+            // If in edit mode AND shift is held down, reset the card
             case KeyEvent.VK_D:
                 if(model.isEditMode()) {
-                    model.moveTreeRight(0.1f);
-                } else {
-
+                    if(b)
+                        model.resetCard(true);
+                    else
+                        model.moveTreeRight(0.1f);
                 }
                 break;
 

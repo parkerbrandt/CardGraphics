@@ -31,6 +31,7 @@ public class Model {
     private boolean isCardOpen;         // Used to show if the card is open or not
     private boolean showInstructions;   // Used to show if the instructions should be open or not
     private boolean isEditMode;         // Use to determine if the user is editing the card or not
+    private boolean reset;
 
     private final Color[] cardColors;   // List of all available card colors
     private int currentColor;           // Current index of selected color
@@ -64,6 +65,7 @@ public class Model {
         isCardOpen = false;
         showInstructions = true;
         isEditMode = false;
+        reset = false;
 
         cardColors = new Color[]{   new Color(198, 41, 41, 255),
                                     new Color(0, 102, 0, 255),
@@ -199,14 +201,6 @@ public class Model {
     }
 
     /**
-     * Will swap the main card out with one that is on the
-     * @param index
-     */
-    public void switchMainCard(int index) {
-
-    }
-
-    /**
      * Switch the currently selected tree
      * If out of bounds of tree array, will be modified in Card class
      */
@@ -256,10 +250,10 @@ public class Model {
     }
 
     /**
-     *
+     * Will modify a boolean to tell the card if it should reset or not
      */
-    public void resetCard() {
-
+    public void resetCard(boolean shouldReset) {
+        reset = shouldReset;
     }
 
     /**
@@ -272,13 +266,13 @@ public class Model {
             @Override
             public void update(GL2 gl) {
 
-                if(isCardOpen) {
-                    System.out.println("Write new text for inside here: ");
-                    insideText = in.nextLine().split(",");
-                } else {
-                    System.out.println("Write new text for front here: ");
-                    frontText = in.nextLine().split(",");
-                }
+            if(isCardOpen) {
+                System.out.println("Write new text for inside here: ");
+                insideText = in.nextLine().split(",");
+            } else {
+                System.out.println("Write new text for front here: ");
+                frontText = in.nextLine().split(",");
+            }
             }
         });
     }
@@ -304,6 +298,10 @@ public class Model {
 
     public boolean isEditMode() {
         return isEditMode;
+    }
+
+    public boolean isReset() {
+        return reset;
     }
 
     public ArrayList<Card> getDisplayCards() {
@@ -342,6 +340,18 @@ public class Model {
 
     public void setSelectedTree(int index) {
         selectedTree = index;
+    }
+
+    public void setCurrentColor(int index) {
+        currentColor = index;
+    }
+
+    public void setFrontText(String[] text) {
+        frontText = text;
+    }
+
+    public void setInsideText(String[] text) {
+        insideText = text;
     }
 
 

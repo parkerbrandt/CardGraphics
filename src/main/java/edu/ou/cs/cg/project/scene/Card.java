@@ -58,7 +58,6 @@ public class Card extends Node {
         this.renderer = view.getRenderer();
 
         this.id = 0;
-
         cardIndex = 0;
 
         rotateAngle = 0;
@@ -187,6 +186,18 @@ public class Card extends Node {
     @Override
     protected void change(GL2 gl) {
 
+        // TODO: Check if the card has been reset
+        if(model.isReset() && cardIndex == 0) {
+
+            // Set the default color and text back to normal
+            model.setCurrentColor(0);
+            model.setFrontText(new String[] {"Hello", "Good Morning"});
+            model.setInsideText(new String[] {"Have a", "good day!"});
+
+            // Tell the model we dont have to reset anymore
+            model.resetCard(false);
+        }
+
         // Check if the text on either side needs to be updated
         front.changeText(model.getFrontText());
         back.changeText(model.getInsideText());
@@ -196,7 +207,6 @@ public class Card extends Node {
     protected void depict(GL2 gl) {
 
         // Rotate the front face of the card
-        // Also rotate each tree
         if(model.isCardOpen() && cardIndex == 0) {
             if(rotateAngle <= 180) {
                 rotateAngle += 2;
