@@ -123,8 +123,15 @@ public class Model {
         }
 
         // If there are less than 9 cards in display cards, add this card
-        if(displayCards.size() < 9)
-            displayCards.add(view.getMainCard());
+        /*
+        if(displayCards.size() < 9) {
+            Card copy = view.getMainCard();
+            copy.setCardIndex(displayCards.size());
+            //TODO: Set transforms
+            displayCards.add(copy);
+            view.addToScene(copy);
+        }
+         */
     }
 
     /**

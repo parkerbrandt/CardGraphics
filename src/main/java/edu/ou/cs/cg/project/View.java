@@ -345,13 +345,33 @@ public class View implements GLEventListener {
 
         if(displayCards.size() > 0) {
             int limit = Math.min(displayCards.size(), 9);
+
             for (int i = 0; i < limit; i++) {
-                // TODO: Add the transformations to put them on the shelves
-                displayCards.get(i).pushTransform(new Transform.Scale(0.25f, 0.25f, 0.25f));
-                displayCards.get(i).pushTransform(new Transform.Translate(0.0f, 1.0f, 0.0f));
-                root.add(displayCards.get(i));
+
+                Card displayCard = displayCards.get(i);
+
+                // Adjust the card location
+                if(i < 3) {
+                    displayCard.pushTransform(new Transform.Translate(-1.0f + (0.8f * i), 4.5f, 4.8f));
+                } else if (i < 6) {
+                    displayCard.pushTransform(new Transform.Translate(-1.0f + (0.8f * (i - 3)), 3.5f, 4.8f));
+                } else {
+                    displayCard.pushTransform(new Transform.Translate(-1.0f + (0.8f * (i - 6)), 3.5f, 4.8f));
+                }
+
+                // Adjust the card size
+                displayCard.pushTransform(new Transform.Scale(0.25f, 0.25f, 0.25f));
+                root.add(displayCard);
             }
         }
+    }
+
+    /**
+     * Adds a node to the scene graph
+     * @param node
+     */
+    public void addToScene(Node node) {
+        root.add(node);
     }
 
 

@@ -79,6 +79,7 @@ public class Card extends Node {
         back.pushTransform(new Transform.Translate(0.5f, 0.0f, -0.02f));
         this.add(back);
 
+        // TODO: Add the front image only if it exists
 
         // Add a sun at the top
         CardImage sun = new CardImage(6, textures, model);
@@ -194,13 +195,17 @@ public class Card extends Node {
             model.setFrontText(new String[] {"Hello", "Good Morning"});
             model.setInsideText(new String[] {"Have a", "good day!"});
 
+            // TODO: Reset to have 3 trees in the correct starting positions
+
             // Tell the model we dont have to reset anymore
             model.resetCard(false);
         }
 
         // Check if the text on either side needs to be updated
-        front.changeText(model.getFrontText());
-        back.changeText(model.getInsideText());
+        if(cardIndex == 0) {
+            front.changeText(model.getFrontText());
+            back.changeText(model.getInsideText());
+        }
     }
 
     @Override
@@ -339,6 +344,10 @@ public class Card extends Node {
         back.setColor(color);
     }
 
+    public void setCardIndex(int index) {
+        cardIndex = index;
+    }
+
 
     /**
      * Inner Class to represent each side of a card
@@ -422,13 +431,19 @@ public class Card extends Node {
         protected void change(GL2 gl) {
 
             // Adjust the shading on the inside of the card for a day/night cycle when the card is open
-            if(model.isCardOpen()) {
+            if(model.isCardOpen() && view.getCounter() % 3 == 0) {
                 int col = inColor.getRed() - 1;
                 if (col < 25)
                     col = 255;
                 inColor = new Color(col, col, col);
             }
 
+            // TODO: Move the sun
+            for(int i = 0; i < images.size(); i++) {
+                if(images.get(i).getIndex() == 6) {
+
+                }
+            }
 
             // Adjust movement of the clouds
             // TODO: Need to utilize x and y for clouds
@@ -570,6 +585,16 @@ public class Card extends Node {
             // Draw the image on a Cube
             Cube.fillFace(gl, 0, getTexture(index));
             Cube.fillFace(gl, 1, getTexture(index));
+        }
+
+
+        //****************************************
+        // Getters and Setters
+        //****************************************
+
+        // Getters
+        public int getIndex() {
+            return index;
         }
     }
 
