@@ -182,7 +182,7 @@ public class Node
 		gl.glPopMatrix();
 	}
 
-	// TODO: Override this method in subclasses that do actual drawing.
+	// Override this method in subclasses that do actual drawing.
 	protected void	depict(GL2 gl)
 	{
 	}
@@ -199,7 +199,7 @@ public class Node
 			node.enable(gl);
 	}
 
-	// TODO: Override this method in subclasses that provide lighting.
+	// Override this method in subclasses that provide lighting.
 	protected void	enableLighting(GL2 gl)
 	{
 	}
@@ -212,7 +212,7 @@ public class Node
 			node.disable(gl);
 	}
 
-	// TODO: Override this method in subclasses that provide lighting.
+	// Override this method in subclasses that provide lighting.
 	protected void	disableLighting(GL2 gl)
 	{
 	}
