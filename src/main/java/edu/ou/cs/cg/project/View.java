@@ -134,7 +134,7 @@ public class View implements GLEventListener {
         height = drawable.getSurfaceHeight();
 
         // Initialize the renderer
-        renderer = new TextRenderer(new Font("Monospaced", Font.PLAIN, 12),
+        renderer = new TextRenderer(new Font("Monospaced", Font.PLAIN, 14),
                                     true, true);
 
         initPipeline(drawable);
@@ -297,15 +297,17 @@ public class View implements GLEventListener {
         renderer.setColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         // Draw instructions on the left side if escape key is clicked
-        // TODO:
         String[] instruct = {   "Instructions: ",
                                 "E to toggle edit mode",
-                                "C to change color",
-                                "D to reset the card",
-                                "T to edit the text",
                                 "S to save the card",
                                 "Space to open the card",
                                 "Num Keys to Change Card",
+                                "--------Edit Mode-------",
+                                "C to change color",
+                                "Shift + D to reset the card",
+                                "T to edit the text",
+                                "Right Arrow to Loop Through Trees",
+                                "WASD to Move Tree"
                                 };
 
         if(model.showInstructions()) {
