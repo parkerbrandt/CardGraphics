@@ -102,14 +102,29 @@ public class Model {
 
     // File save/load methods
     /**
-     * Save the held card data to a file
-     * @param filename
-     * @throws IOException
+     * Save the held card data to a file in the /cards/ directory
+     * Save in the format "id,color,
      */
-    public void save(String filename, Card card) throws IOException {
+    public void save() {
 
-        BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+        try {
+            URL url = Model.class.getResource("/cards/");
+            if(url != null) {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(url.getPath() + "card" + view.getMainCard().getId() + ".csv"));
 
+                String output = view.getMainCard().getId() + "," + currentColor + "," + frontText[0] + "," + insideText[0];
+                writer.write(output);
+
+                writer.close();
+            }
+
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+
+        // If there are less than 9 cards in display cards, add this card
+        if(displayCards.size() < 9)
+            displayCards.add(view.getMainCard());
     }
 
     /**
@@ -152,6 +167,7 @@ public class Model {
             }
 
         }
+        reader.close();
 
         // Create the card
         add = new Card(view.getTextures(), view, this, index);

@@ -141,7 +141,7 @@ public class KeyHandler extends KeyAdapter {
                 if(model.isEditMode()) {
                     model.moveTreeUp(-0.1f);
                 } else {
-
+                    model.save();
                 }
                 break;
 
