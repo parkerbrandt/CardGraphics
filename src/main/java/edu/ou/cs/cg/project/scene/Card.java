@@ -38,6 +38,8 @@ public class Card extends Node {
     private CardSide front;
     private CardSide back;
 
+    private CardImage frontImg;
+
     private int rotateAngle;            // The amount the front face of card is opened
 
 
@@ -79,7 +81,11 @@ public class Card extends Node {
         back.pushTransform(new Transform.Translate(0.5f, 0.0f, -0.02f));
         this.add(back);
 
-        // TODO: Add the front image only if it exists
+        // Add the front image
+        frontImg = new CardImage(12, textures, model);
+        frontImg.pushTransform(new Transform.Scale(0.25f, 0.25f, 1.0f));
+        frontImg.pushTransform(new Transform.Translate(0.35f, 0.3f, 0.08f));
+
 
         // Add a sun at the top
         CardImage sun = new CardImage(6, textures, model);
@@ -146,6 +152,11 @@ public class Card extends Node {
         back.pushTransform(new Transform.Rotate(0.0f, 1.0f, 0.0f, 180));
         back.pushTransform(new Transform.Translate(0.5f, 0.0f, -0.02f));
         this.add(back);
+
+        // Add the front image
+        frontImg = new CardImage(12, textures, model);
+        frontImg.pushTransform(new Transform.Scale(0.25f, 0.25f, 1.0f));
+        frontImg.pushTransform(new Transform.Translate(0.35f, 0.3f, 0.08f));
 
         // Add a sun at the top
         CardImage sun = new CardImage(6, textures, model);
@@ -227,6 +238,12 @@ public class Card extends Node {
         // Check if the color needs to be changed if this is the "main" card
         if(cardIndex == 0)
             setColor(model.getCardColor());
+
+        // Check if the front image should be rendered
+        if(model.isShowFront() && cardIndex == 0)
+            front.add(frontImg);
+        else
+            front.remove(frontImg);
 
         // Render each side of the card
         front.render(gl);
@@ -408,6 +425,12 @@ public class Card extends Node {
         public void addTree(CardImage image, float dx, float dy) {
             trees.add(image);
             treeLoc.add(new Point2D.Float(dx, dy));
+        }
+
+        // Remove all trees from this side
+        public void removeTrees() {
+            trees = new ArrayList<>();
+            treeLoc = new ArrayList<>();
         }
 
         public void addCloud(CardImage image, float dx, float dy) {

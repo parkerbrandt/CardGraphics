@@ -135,6 +135,12 @@ public class KeyHandler extends KeyAdapter {
                 model.setEditMode(!model.isEditMode());
                 break;
 
+            // Allow the user to toggle showing an image on the front of the card
+            case KeyEvent.VK_F:
+                if(model.isEditMode())
+                    model.setShowFront(!model.isShowFront());
+                break;
+
             // Save card to the next open slot, if none available delete #1
             // If edit mode is enabled, move the tree
             case KeyEvent.VK_S:

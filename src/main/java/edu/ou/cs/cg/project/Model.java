@@ -51,6 +51,8 @@ public class Model {
     private String[] frontText;
     private String[] insideText;
 
+    private boolean showFront;
+
     private Scanner in;
 
 
@@ -92,6 +94,8 @@ public class Model {
         frontText = new String[] {"Hello", "Good Morning"};
         insideText = new String[] {"Have a", "good day!"};
 
+        showFront = false;
+
         in = new Scanner(System.in);
     }
 
@@ -127,7 +131,6 @@ public class Model {
         if(displayCards.size() < 9) {
             Card copy = view.getMainCard();
             copy.setCardIndex(displayCards.size());
-            //TODO: Set transforms
             displayCards.add(copy);
             view.addToScene(copy);
         }
@@ -347,6 +350,10 @@ public class Model {
         return isFrontTree;
     }
 
+    public boolean isShowFront() {
+        return showFront;
+    }
+
 
     // Setters
     public void setCardOpen(boolean isCardOpen) {
@@ -375,6 +382,10 @@ public class Model {
 
     public void setInsideText(String[] text) {
         insideText = text;
+    }
+
+    public void setShowFront(boolean showFront) {
+        this.showFront = showFront;
     }
 
 
