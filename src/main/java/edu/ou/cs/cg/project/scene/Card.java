@@ -40,12 +40,6 @@ public class Card extends Node {
 
     private int rotateAngle;            // The amount the front face of card is opened
 
-    private ArrayList<String>  text;     // All text on the card
-
-    private ArrayList<CardImage> trees;    // The location of all trees on the inside of the card
-
-    private int time;                    // The time of day on the card - ranges from 0 to 1800 (30 seconds) for day/night cycle
-
 
     //****************************************
     // Constructor
@@ -198,7 +192,10 @@ public class Card extends Node {
     public void copyCard(Card toCopy) {
 
         // Adjust the variables of this card to match that of the copy card
+        this.id = toCopy.getId();
 
+        this.front = toCopy.getFront();
+        this.back = toCopy.getBack();
     }
 
 
@@ -262,6 +259,14 @@ public class Card extends Node {
     // Getters
     public int getId() {
         return id;
+    }
+
+    public CardSide getFront() {
+        return front;
+    }
+
+    public CardSide getBack() {
+        return back;
     }
 
 

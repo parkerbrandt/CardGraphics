@@ -51,38 +51,65 @@ public class KeyHandler extends KeyAdapter {
 
         switch(e.getKeyCode()) {
 
-            // Open the card at the number location on the shelves (1-9)
+            // Open the card at the number location on the shelves (1-9) if in edit mode
             case KeyEvent.VK_1:
+                if(model.getDisplayCards().size() >= 1 && model.isEditMode()) {
+                    // view.getMainCard().copyCard(model.getDisplayCards().get(0));
+                }
                 break;
 
             case KeyEvent.VK_2:
+                if(model.getDisplayCards().size() >= 2 && model.isEditMode()) {
+                    // view.getMainCard().copyCard(model.getDisplayCards().get(1));
+                }
                 break;
 
             case KeyEvent.VK_3:
+                if(model.getDisplayCards().size() >= 3 && model.isEditMode()) {
+                    // view.getMainCard().copyCard(model.getDisplayCards().get(2));
+                }
                 break;
 
             case KeyEvent.VK_4:
+                if(model.getDisplayCards().size() >= 4 && model.isEditMode()) {
+                    // view.getMainCard().copyCard(model.getDisplayCards().get(3));
+                }
                 break;
 
             case KeyEvent.VK_5:
+                if(model.getDisplayCards().size() >= 5 && model.isEditMode()) {
+                    // view.getMainCard().copyCard(model.getDisplayCards().get(4));
+                }
                 break;
 
             case KeyEvent.VK_6:
+                if(model.getDisplayCards().size() >= 6 && model.isEditMode()) {
+                    // view.getMainCard().copyCard(model.getDisplayCards().get(5));
+                }
                 break;
 
             case KeyEvent.VK_7:
+                if(model.getDisplayCards().size() >= 7 && model.isEditMode()) {
+                    // view.getMainCard().copyCard(model.getDisplayCards().get(6));
+                }
                 break;
 
             case KeyEvent.VK_8:
+                if(model.getDisplayCards().size() >= 8 && model.isEditMode()) {
+                    // view.getMainCard().copyCard(model.getDisplayCards().get(7));
+                }
                 break;
 
             case KeyEvent.VK_9:
+                if(model.getDisplayCards().size() >= 9 && model.isEditMode()) {
+                    // view.getMainCard().copyCard(model.getDisplayCards().get(8));
+                }
                 break;
 
             // Move the selected tree to the left
             case KeyEvent.VK_A:
                 if(model.isEditMode()) {
-
+                    model.moveTreeRight(-0.1f);
                 }
                 break;
 
@@ -95,7 +122,7 @@ public class KeyHandler extends KeyAdapter {
             // If in edit mode, move the tree to the right
             case KeyEvent.VK_D:
                 if(model.isEditMode()) {
-
+                    model.moveTreeRight(0.1f);
                 } else {
 
                 }
@@ -110,7 +137,7 @@ public class KeyHandler extends KeyAdapter {
             // If edit mode is enabled, move the tree
             case KeyEvent.VK_S:
                 if(model.isEditMode()) {
-
+                    model.moveTreeUp(-0.1f);
                 } else {
 
                 }
@@ -126,7 +153,7 @@ public class KeyHandler extends KeyAdapter {
             // Move the selected tree up
             case KeyEvent.VK_W:
                 if(model.isEditMode()) {
-
+                    model.moveTreeUp(0.1f);
                 }
                 break;
 
