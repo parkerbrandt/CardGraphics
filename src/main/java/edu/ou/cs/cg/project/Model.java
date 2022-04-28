@@ -28,7 +28,6 @@ public class Model {
     //****************************************
     private final View view;
 
-    // TODO: Other variables
     private boolean isCardOpen;         // Used to show if the card is open or not
     private boolean showInstructions;   // Used to show if the instructions should be open or not
     private boolean isEditMode;         // Use to determine if the user is editing the card or not
@@ -80,11 +79,8 @@ public class Model {
         cardX = 0.0;
         cardY = 0.0;
 
-        textures = view.getTextures();
-
         // Load first 9 display cards from the cards resource folder
         displayCards = new ArrayList<>();
-        loadDisplayCards();
 
         selectedTree = 0;
         isFrontTree = true;
@@ -120,7 +116,7 @@ public class Model {
      * @param filename
      * @throws IOException
      */
-    public Card load(String filename, Texture[] textures, int index) throws IOException {
+    private Card load(String filename, Texture[] textures, int index) throws IOException {
 
         // Card Variables
         Card add;
@@ -156,7 +152,7 @@ public class Model {
         }
 
         // Create the card
-        add = new Card(textures, view, this, index);
+        add = new Card(view.getTextures(), view, this, index);
         add.setColor(cardColors[colorIdx]);
         add.addText(frontText, true);
         add.addText(inText, false);
@@ -175,7 +171,7 @@ public class Model {
     /**
      * Loads the cards from the /cards/ directory and displays the first 9 on the shelves
      */
-    private void loadDisplayCards() {
+    public void loadDisplayCards() {
 
         for(int i = 0; i < 9; i++) {
             // Get the URL of the file
@@ -183,7 +179,6 @@ public class Model {
 
             // If not null, load the file
             if(url != null) {
-                System.out.println(url.getPath());
                 try {
                     displayCards.add(load(url.getPath(), textures, i));
                 } catch(IOException e) {
@@ -214,7 +209,6 @@ public class Model {
     /**
      * Switch the currently selected tree
      * If out of bounds of tree array, will be modified in Card class
-     * TODO: Check to adjust between left and right sides
      */
     public void switchSelectedTree() {
         if(isEditMode) {
@@ -313,7 +307,7 @@ public class Model {
     }
 
     public ArrayList<Card> getDisplayCards() {
-        return new ArrayList<>();
+        return displayCards;
     }
 
     public int getSelectedTree() {

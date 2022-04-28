@@ -340,14 +340,15 @@ public class View implements GLEventListener {
         root.add(main);
 
         // Display the first 9 display cards from model
+        model.loadDisplayCards();
         ArrayList<Card> displayCards = model.getDisplayCards();
-        int limit = Math.min(displayCards.size(), 9);
+
         if(displayCards.size() > 0) {
-            System.out.println("AHAHAHAH");
+            int limit = Math.min(displayCards.size(), 9);
             for (int i = 0; i < limit; i++) {
                 // TODO: Add the transformations to put them on the shelves
                 displayCards.get(i).pushTransform(new Transform.Scale(0.25f, 0.25f, 0.25f));
-                displayCards.get(i).pushTransform(new Transform.Translate(-1.1f, 0.1f, 0.0f));
+                displayCards.get(i).pushTransform(new Transform.Translate(0.0f, 1.0f, 0.0f));
                 root.add(displayCards.get(i));
             }
         }

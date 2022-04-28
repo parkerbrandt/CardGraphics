@@ -197,7 +197,7 @@ public class Card extends Node {
 
         // Rotate the front face of the card
         // Also rotate each tree
-        if(model.isCardOpen()) {
+        if(model.isCardOpen() && cardIndex == 0) {
             if(rotateAngle <= 180) {
                 rotateAngle += 2;
                 front.pushTransform(new Transform.Rotate(0.0f, 1.0f, 0.0f, -2));
