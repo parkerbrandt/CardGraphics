@@ -47,6 +47,7 @@ public class Model {
     private ArrayList<Point2D.Float> treeLoc;
 
     private String[] frontText;
+    private String[] insideText;
 
     private Scanner in;
 
@@ -87,6 +88,7 @@ public class Model {
         treeLoc = new ArrayList<>();
 
         frontText = new String[] {"Hello", "Good Morning"};
+        insideText = new String[] {"Have a", "good day!"};
 
         in = new Scanner(System.in);
     }
@@ -190,14 +192,19 @@ public class Model {
      * Allows the user to change the text on the card
      * TODO: Change to just changeText() and if isOpen() is true will determine if the front or inside text should be changed
      */
-    public void changeFrontText() {
+    public void changeText() {
 
         view.getCanvas().invoke(false, new BasicUpdater() {
             @Override
             public void update(GL2 gl) {
 
-                System.out.println("Write new text for front here: ");
-                frontText = in.nextLine().split(",");
+                if(isCardOpen) {
+                    System.out.println("Write new text for inside here: ");
+                    insideText = in.nextLine().split(",");
+                } else {
+                    System.out.println("Write new text for front here: ");
+                    frontText = in.nextLine().split(",");
+                }
             }
         });
     }
@@ -235,6 +242,10 @@ public class Model {
 
     public String[] getFrontText() {
         return frontText;
+    }
+
+    public String[] getInsideText() {
+        return insideText;
     }
 
 

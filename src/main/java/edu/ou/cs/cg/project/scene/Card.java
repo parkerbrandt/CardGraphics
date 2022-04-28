@@ -106,13 +106,20 @@ public class Card extends Node {
             addCloud(x, y, 0.25f, rand.nextBoolean());
         }
 
-        // Add some default text to the front
+        // Add some text to the front
         String[] frontText = model.getFrontText();
-        CardText gm = new CardText(renderer, frontText);
-        gm.pushTransform(new Transform.Translate(0.2f, 0.3f, 1.2f));
-        gm.pushTransform(new Transform.Scale(0.8f, 0.8f, 1.0f));
-        front.setText(gm);
+        CardText frt = new CardText(renderer, frontText);
+        frt.pushTransform(new Transform.Translate(0.2f, 0.3f, 1.2f));
+        frt.pushTransform(new Transform.Scale(0.8f, 0.8f, 1.0f));
+        front.setText(frt);
 
+        // Add some text to the inside on the right
+        String[] insideText = model.getInsideText();
+        CardText in = new CardText(renderer, insideText);
+        in.pushTransform(new Transform.Scale(0.5f, 0.5f, 1.0f));
+        in.pushTransform(new Transform.Rotate(0.0f, 1.0f, 0.0f, 180));
+        in.pushTransform(new Transform.Translate(0.7f, 0.4f, -1.5f));
+        back.setText(in);
     }
 
     /**
@@ -147,8 +154,9 @@ public class Card extends Node {
     @Override
     protected void change(GL2 gl) {
 
-        // Check if the text on the front side needs to be updated
+        // Check if the text on either side needs to be updated
         front.changeText(model.getFrontText());
+        back.changeText(model.getInsideText());
     }
 
     @Override
