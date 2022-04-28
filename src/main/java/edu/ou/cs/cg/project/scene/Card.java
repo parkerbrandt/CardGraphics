@@ -206,7 +206,13 @@ public class Card extends Node {
             model.setFrontText(new String[] {"Hello", "Good Morning"});
             model.setInsideText(new String[] {"Have a", "good day!"});
 
-            // TODO: Reset to have 3 trees in the correct starting positions
+            // Reset to have 3 trees in the correct starting positions
+            front.removeTrees();
+            back.removeTrees();
+
+            addTree(0.5f, 0.2f, 0.25f, true);
+            addTree(0.1f, 0.35f, 0.25f, true);
+            addTree(0.5f, 0.3f, 0.25f, false);
 
             // Tell the model we dont have to reset anymore
             model.resetCard(false);
