@@ -119,7 +119,7 @@ public class KeyHandler extends KeyAdapter {
             // Edit text if in edit mode
             case KeyEvent.VK_T:
                 if(model.isEditMode()) {
-                    model.changeFrontText();
+                    model.changeText();
                 }
                 break;
 
@@ -142,7 +142,7 @@ public class KeyHandler extends KeyAdapter {
 
             // Loop through each tree on the card and allow the user to move the
             case KeyEvent.VK_RIGHT:
-
+                model.switchSelectedTree();
                 break;
 
             default:

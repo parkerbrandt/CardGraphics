@@ -75,6 +75,7 @@ public class Card extends Node {
         // The "front" of the card
         front = new CardSide(textures, view, model);
         front.pushTransform(new Transform.Scale(0.5f, 0.8f, 0.01f));
+        front.setFront(true);
         this.add(front);
 
         // The "back" of the card - should always be slightly "behind" the front
@@ -293,9 +294,9 @@ public class Card extends Node {
         private ArrayList<CardImage>        clouds;             // All clouds
         private ArrayList<Point2D.Float>    cloudLoc;           // All cloud locations
 
-        private CardText   text;               // All text on this side
+        private CardText text;                                // All text on this side
 
-        private float treeRotate;       // The angle of rotation of the trees
+        private boolean isFront;
 
 
         //****************************************
@@ -317,7 +318,7 @@ public class Card extends Node {
             clouds = new ArrayList<>();
             cloudLoc = new ArrayList<>();
 
-            treeRotate = 180;
+            isFront = false;
 
             text = new CardText(view.getRenderer(), new String[] {""});
         }
@@ -361,23 +362,8 @@ public class Card extends Node {
                 inColor = new Color(col, col, col);
             }
 
-            // Adjust the movement of the trees and the clouds
-            // once the clouds reach the right side of the card - remove and spawn a new one
-            for(CardImage tree : trees) {
-                // Rotate the trees up or down based on if the card is open or closed
-                if(model.isCardOpen()) {
-                    if(treeRotate >= 0) {
-                        //tree.pushTransform(new Transform.Rotate(1.0f, 0.0f, 0.0f, -2f));
-                        //treeRotate -= 2;
-                    }
-                } else {
-                    if(treeRotate <= 180) {
-                        //tree.pushTransform(new Transform.Rotate(1.0f, 0.0f, 0.0f, 2f));
-                        //treeRotate += 2;
-                    }
-                }
-            }
 
+            // Adjust movement of the clouds
             // TODO: Need to utilize x and y for clouds
             for(int i = 0; i < clouds.size(); i++) {
                 // Check if cloud needs to be reset
@@ -389,8 +375,6 @@ public class Card extends Node {
 
         @Override
         protected void depict(GL2 gl) {
-
-            // TODO: Check if card has been reset
 
             // Depict as transformed cube with paper texture
 
@@ -410,18 +394,23 @@ public class Card extends Node {
 
             // Draw all the images for this side of the card
             // Draw all trees
-            // TODO: If in edit mode, get selected tree and draw a golden square around
+            // If in edit mode, get selected tree and draw a golden square around
             for(int i = 0; i < trees.size(); i++) {
                 // Check the selected tree bounds
-                if(model.getSelectedTree() >= trees.size())
-                    model.setSelectedTree(0);
+                if(model.getSelectedTree() > trees.size())
+                    model.switchTreeSide();
 
                 // Check if we should draw a box around the tree
-                if(model.isEditMode() && i == model.getSelectedTree()) {
+                if(model.isEditMode() && i == model.getSelectedTree() && model.isFrontTree() == isFront) {
 
                     gl.glColor3f(1.0f, 215.0f/255.0f, 0.0f);
 
-                    gl.glBegin(GL2.GL_QUADS);
+                    gl.glBegin(GL2.GL_LINE_LOOP);
+
+                    gl.glVertex3f(treeLoc.get(i).x, treeLoc.get(i).y, -0.08f);
+                    gl.glVertex3f(treeLoc.get(i).x, treeLoc.get(i).y + 0.25f, -0.08f);
+                    gl.glVertex3f(treeLoc.get(i).x + 0.25f, treeLoc.get(i).y + 0.25f, -0.08f);
+                    gl.glVertex3f(treeLoc.get(i).x + 0.25f, treeLoc.get(i).y, -0.08f);
 
                     gl.glEnd();
                 }
@@ -466,6 +455,10 @@ public class Card extends Node {
 
         public void setText(CardText newText) {
             text = newText;
+        }
+
+        public void setFront(boolean isFront) {
+            this.isFront = isFront;
         }
     }
 

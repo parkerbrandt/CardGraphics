@@ -43,6 +43,7 @@ public class Model {
     private Texture[] textures;
 
     private int selectedTree;
+    private boolean isFrontTree;
 
     private ArrayList<Point2D.Float> treeLoc;
 
@@ -84,6 +85,7 @@ public class Model {
         displayCards = new ArrayList<>();
 
         selectedTree = 0;
+        isFrontTree = true;
 
         treeLoc = new ArrayList<>();
 
@@ -151,11 +153,17 @@ public class Model {
     /**
      * Switch the currently selected tree
      * If out of bounds of tree array, will be modified in Card class
+     * TODO: Check to adjust between left and right sides
      */
     public void switchSelectedTree() {
         if(isEditMode) {
             selectedTree += 1;
         }
+    }
+
+    public void switchTreeSide() {
+        isFrontTree = !isFrontTree;
+        selectedTree = 0;
     }
 
 
@@ -246,6 +254,10 @@ public class Model {
 
     public String[] getInsideText() {
         return insideText;
+    }
+
+    public boolean isFrontTree() {
+        return isFrontTree;
     }
 
 
