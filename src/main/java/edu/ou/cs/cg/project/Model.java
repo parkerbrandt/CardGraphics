@@ -229,7 +229,6 @@ public class Model {
 
     /**
      * Move the selected tree up
-     * TODO: Check bounds
      * @param amt
      */
     public void moveTreeUp(float amt) {
@@ -248,7 +247,6 @@ public class Model {
 
     /**
      * Move the selected tree to the right
-     * TODO: Check bounds
      * @param amt
      */
     public void moveTreeRight(float amt) {
@@ -256,11 +254,11 @@ public class Model {
         ArrayList<Point2D.Float> tr;
         if(isFrontTree) {
             tr = view.getMainCard().getFront().getTreeLoc();
-            if(tr.get(selectedTree).x + amt > 0 && tr.get(selectedTree).x + amt < 0.7)
+            if(tr.get(selectedTree).x + amt > 0 && tr.get(selectedTree).x + amt < 0.8)
                 view.getMainCard().getFront().setTreeLoc(tr.get(selectedTree).x + amt, tr.get(selectedTree).y, selectedTree);
         } else {
             tr = view.getMainCard().getBack().getTreeLoc();
-            if(tr.get(selectedTree).x + amt > 0 && tr.get(selectedTree).x + amt < 0.7)
+            if(tr.get(selectedTree).x + amt > 0 && tr.get(selectedTree).x + amt < 0.8)
                 view.getMainCard().getBack().setTreeLoc(tr.get(selectedTree).x + amt, tr.get(selectedTree).y, selectedTree);
         }
     }

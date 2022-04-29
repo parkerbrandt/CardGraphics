@@ -327,11 +327,9 @@ public class Card extends Node {
 
         // Add the tree to the intended side
         if(isFront) {
-            front.addTree(newTree, dx, dy);
-            front.add(trunk);
+            front.addTree(newTree, trunk, dx, dy);
         } else {
-            back.addTree(newTree, dx, dy);
-            back.add(trunk);
+            back.addTree(newTree, trunk, dx, dy);
         }
     }
 
@@ -418,6 +416,7 @@ public class Card extends Node {
         private ArrayList<CardImage>        images;             // All of the images contained on this side
         private ArrayList<CardImage>        trees;              // All trees
         private ArrayList<Point2D.Float>    treeLoc;            // All tree locations
+        private ArrayList<CardImage>        trunks;             // Trunks for the trees
 
         private ArrayList<CardImage>        clouds;             // All clouds
         private ArrayList<Point2D.Float>    cloudLoc;           // All cloud locations
@@ -443,6 +442,7 @@ public class Card extends Node {
             images = new ArrayList<>();
             trees = new ArrayList<>();
             treeLoc = new ArrayList<>();
+            trunks = new ArrayList<>();
             clouds = new ArrayList<>();
             cloudLoc = new ArrayList<>();
 
@@ -457,15 +457,19 @@ public class Card extends Node {
         //****************************************
 
         // Add images to this side - specified by type of image
-        public void addTree(CardImage image, float dx, float dy) {
+        public void addTree(CardImage image, CardImage trunk, float dx, float dy) {
             trees.add(image);
             treeLoc.add(new Point2D.Float(dx, dy));
+
+            // Add the trunk
+            trunks.add(trunk);
         }
 
         // Remove all trees from this side
         public void removeTrees() {
             trees = new ArrayList<>();
             treeLoc = new ArrayList<>();
+            trunks = new ArrayList<>();
         }
 
         public void addCloud(CardImage image, float dx, float dy) {
@@ -501,6 +505,8 @@ public class Card extends Node {
                 trees.get(i).popTransform();
                 trees.get(i).pushTransform(new Transform.Translate(treeLoc.get(i).x, treeLoc.get(i).y, -0.08f));
 
+                trunks.get(i).popTransform();
+                trunks.get(i).pushTransform(new Transform.Translate(treeLoc.get(i).x, treeLoc.get(i).y - 0.2f, -0.08f));
             }
 
             // Adjust movement of the clouds
@@ -561,6 +567,7 @@ public class Card extends Node {
                 }
 
                 trees.get(i).render(gl);
+                trunks.get(i).render(gl);
             }
 
             // Draw all clouds
