@@ -496,6 +496,13 @@ public class Card extends Node {
                 inColor = new Color(col, col, col);
             }
 
+            // Adjust tree locations
+            for(int i = 0; i < trees.size(); i++) {
+                trees.get(i).popTransform();
+                trees.get(i).pushTransform(new Transform.Translate(treeLoc.get(i).x, treeLoc.get(i).y, -0.08f));
+
+            }
+
             // Adjust movement of the clouds
             for(int i = 0; i < clouds.size(); i++) {
 
@@ -581,6 +588,10 @@ public class Card extends Node {
             return trees;
         }
 
+        public ArrayList<Point2D.Float> getTreeLoc() {
+            return treeLoc;
+        }
+
         public ArrayList<CardImage> getClouds() {
             return clouds;
         }
@@ -596,6 +607,10 @@ public class Card extends Node {
 
         public void setTree(CardImage image, int index) {
             trees.set(index, image);
+        }
+
+        public void setTreeLoc(float dx, float dy, int index) {
+            treeLoc.set(index, new Point2D.Float(dx, dy));
         }
 
         public void setText(CardText newText) {
@@ -659,15 +674,6 @@ public class Card extends Node {
             Cube.fillFace(gl, 1, getTexture(index));
         }
 
-
-        //****************************************
-        // Getters and Setters
-        //****************************************
-
-        // Getters
-        public int getIndex() {
-            return index;
-        }
     }
 
 

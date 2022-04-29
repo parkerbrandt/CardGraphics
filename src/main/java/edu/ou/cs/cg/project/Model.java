@@ -46,8 +46,6 @@ public class Model {
     private int selectedTree;
     private boolean isFrontTree;
 
-    private ArrayList<Point2D.Float> treeLoc;
-
     private String[] frontText;
     private String[] insideText;
 
@@ -88,8 +86,6 @@ public class Model {
 
         selectedTree = 0;
         isFrontTree = true;
-
-        treeLoc = new ArrayList<>();
 
         frontText = new String[] {"Hello", "Good Morning"};
         insideText = new String[] {"Have a", "good day!"};
@@ -237,7 +233,17 @@ public class Model {
      * @param amt
      */
     public void moveTreeUp(float amt) {
-        treeLoc.set(selectedTree, new Point2D.Float(treeLoc.get(selectedTree).x, treeLoc.get(selectedTree).y + amt));
+
+        ArrayList<Point2D.Float> tr;
+        if(isFrontTree) {
+            tr = view.getMainCard().getFront().getTreeLoc();
+            if(tr.get(selectedTree).y + amt > 0.2 && tr.get(selectedTree).y + amt < 0.45)
+                view.getMainCard().getFront().setTreeLoc(tr.get(selectedTree).x, tr.get(selectedTree).y + amt, selectedTree);
+        } else {
+            tr = view.getMainCard().getBack().getTreeLoc();
+            if(tr.get(selectedTree).y + amt > 0.2 && tr.get(selectedTree).y + amt < 0.45)
+                view.getMainCard().getBack().setTreeLoc(tr.get(selectedTree).x, tr.get(selectedTree).y + amt, selectedTree);
+        }
     }
 
     /**
@@ -246,7 +252,17 @@ public class Model {
      * @param amt
      */
     public void moveTreeRight(float amt) {
-        treeLoc.set(selectedTree, new Point2D.Float(treeLoc.get(selectedTree).x + amt, treeLoc.get(selectedTree).y));
+
+        ArrayList<Point2D.Float> tr;
+        if(isFrontTree) {
+            tr = view.getMainCard().getFront().getTreeLoc();
+            if(tr.get(selectedTree).x + amt > 0 && tr.get(selectedTree).x + amt < 0.7)
+                view.getMainCard().getFront().setTreeLoc(tr.get(selectedTree).x + amt, tr.get(selectedTree).y, selectedTree);
+        } else {
+            tr = view.getMainCard().getBack().getTreeLoc();
+            if(tr.get(selectedTree).x + amt > 0 && tr.get(selectedTree).x + amt < 0.7)
+                view.getMainCard().getBack().setTreeLoc(tr.get(selectedTree).x + amt, tr.get(selectedTree).y, selectedTree);
+        }
     }
 
     /**
