@@ -125,16 +125,6 @@ public class Model {
         } catch(IOException e) {
             e.printStackTrace();
         }
-
-        // If there are less than 9 cards in display cards, add this card
-        /*
-        if(displayCards.size() < 9) {
-            Card copy = view.getMainCard();
-            copy.setCardIndex(displayCards.size());
-            displayCards.add(copy);
-            view.addToScene(copy);
-        }
-         */
     }
 
     /**
@@ -241,22 +231,6 @@ public class Model {
         selectedTree = 0;
     }
 
-
-    /**
-     * Adds a tree to the main card
-     * TODO: Spawn random tree
-     */
-    public void addTree() {
-        // main.addTree()
-    }
-
-    /**
-     *
-     */
-    public void deleteTree() {
-        // main.removeTree()
-    }
-
     /**
      * Move the selected tree up
      * TODO: Check bounds
@@ -284,7 +258,6 @@ public class Model {
 
     /**
      * Allows the user to change the text on the card
-     * TODO: Change to just changeText() and if isOpen() is true will determine if the front or inside text should be changed
      */
     public void changeText() {
 

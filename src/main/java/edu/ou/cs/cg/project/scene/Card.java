@@ -86,7 +86,6 @@ public class Card extends Node {
         frontImg.pushTransform(new Transform.Scale(0.25f, 0.25f, 1.0f));
         frontImg.pushTransform(new Transform.Translate(0.35f, 0.3f, 0.08f));
 
-
         // Add a sun at the top
         CardImage sun = new CardImage(6, textures, model);
         sun.pushTransform(new Transform.Scale(0.25f, 0.25f, 1.0f));
@@ -198,7 +197,7 @@ public class Card extends Node {
     @Override
     protected void change(GL2 gl) {
 
-        // TODO: Check if the card has been reset
+        // Check if the card has been reset
         if(model.isReset() && cardIndex == 0) {
 
             // Set the default color and text back to normal
@@ -217,6 +216,37 @@ public class Card extends Node {
             // Tell the model we dont have to reset anymore
             model.resetCard(false);
         }
+
+        // Check if the clouds need to be switched to the other side
+        ArrayList<Integer> switchClouds = new ArrayList<>();
+
+        // Check the front
+        for(int i = 0; i < front.getCloudLoc().size(); i++) {
+            if(front.getCloudLoc().get(i).x <= 0)
+                switchClouds.add(i);
+        }
+
+        // Add any clouds to the back
+        for(int j = 0; j < switchClouds.size(); j++) {
+            addCloud(0.7f, front.getCloudLoc().get(switchClouds.get(j)).y, 0.25f, false);
+            front.removeCloud(switchClouds.get(j));
+        }
+
+
+        // Check the back
+        switchClouds = new ArrayList<>();
+        for(int i = 0; i < back.getCloudLoc().size(); i++) {
+            if(back.getCloudLoc().get(i).x <= 0)
+                switchClouds.add(i);
+        }
+
+        // Add any clouds to the front
+        for(int j = 0; j < switchClouds.size(); j++) {
+            addCloud(0.7f, back.getCloudLoc().get(switchClouds.get(j)).y, 0.25f, true);
+            back.removeCloud(switchClouds.get(j));
+        }
+
+
 
         // Check if the text on either side needs to be updated
         if(cardIndex == 0) {
@@ -277,7 +307,6 @@ public class Card extends Node {
 
     /**
      * Adds a tree to a side of the card, offset by a certain amount on the cards
-     * TODO: Store tree location information
      *
      * @param dx x offset
      * @param dy y offset
@@ -467,19 +496,17 @@ public class Card extends Node {
                 inColor = new Color(col, col, col);
             }
 
-            // TODO: Move the sun
-            for(int i = 0; i < images.size(); i++) {
-                if(images.get(i).getIndex() == 6) {
-
-                }
-            }
-
             // Adjust movement of the clouds
-            // TODO: Need to utilize x and y for clouds
             for(int i = 0; i < clouds.size(); i++) {
-                // Check if cloud needs to be reset
-                if(cloudLoc.get(i).x > 1.0) {
-                    cloudLoc.set(i, new Point2D.Float());
+
+                // Move the clouds slightly when open
+                if(model.isCardOpen()) {
+
+                    // check the bounds, reset if necessary
+                    if(cloudLoc.get(i).x > 0) {
+                        cloudLoc.set(i, new Point2D.Float(cloudLoc.get(i).x - 0.001f, cloudLoc.get(i).y));
+                        clouds.get(i).pushTransform(new Transform.Translate(-0.001f, 0.0f, 0.0f));
+                    }
                 }
             }
         }
@@ -554,6 +581,13 @@ public class Card extends Node {
             return trees;
         }
 
+        public ArrayList<CardImage> getClouds() {
+            return clouds;
+        }
+
+        public ArrayList<Point2D.Float> getCloudLoc() {
+            return cloudLoc;
+        }
 
         // Setters
         public void setColor(Color color) {
@@ -570,6 +604,15 @@ public class Card extends Node {
 
         public void setFront(boolean isFront) {
             this.isFront = isFront;
+        }
+
+
+        //****************************************
+        // Modification Methods
+        //****************************************
+        public void removeCloud(int index) {
+            clouds.remove(index);
+            cloudLoc.remove(index);
         }
     }
 
