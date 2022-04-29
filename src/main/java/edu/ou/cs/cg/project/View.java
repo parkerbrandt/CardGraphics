@@ -305,6 +305,7 @@ public class View implements GLEventListener {
                                 "--------Edit Mode-------",
                                 "C to change color",
                                 "Shift + D to reset the card",
+                                "F to toggle the front image",
                                 "T to edit the text",
                                 "Right Arrow to Loop Through Trees",
                                 "WASD to Move Tree"
